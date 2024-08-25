@@ -2,8 +2,6 @@
 
 using namespace std;
 
-
-
 void ADD(regAddr& Rd, regAddr& Rs, regAddr& Rt) // yet to add overflow trap
 {
     int32_t a = static_cast<int32_t>(MIPS.registers[Rs]);
@@ -85,6 +83,157 @@ void SRL(regAddr& Rd, regAddr& Rs, regAddr& shift5) { MIPS.registers[Rd] = MIPS.
 
 void SRLV(regAddr& Rd, regAddr& Rs, regAddr& Rt) { SRL(Rd, Rs, static_cast<uint8_t>(MIPS.registers[Rt]) & 0x1F); }
 
+void AND(regAddr& Rd, regAddr& Rs, regAddr& Rt) { MIPS.registers[Rd] = MIPS.registers[Rs] & MIPS.registers[Rt]; }
 
+void ANDI(regAddr& Rd, regAddr& Rs, uint16_t const16) { MIPS.registers[Rd] = MIPS.registers[Rs] & const16; }
 
+void EXT(regAddr& Rt, regAddr& Rs, regAddr& pos, regAddr& size)
+{
+    MIPS.registers[Rt] = ((1ULL << size) - 1) & (MIPS.registers[Rs] >> pos);
+}
 
+void INS(regAddr& Rt, regAddr& Rs, regAddr& pos, regAddr& size)
+{
+    uint32_t mask = (1ULL << size) - 1;
+    MIPS.registers[Rt] = (MIPS.registers[Rt] & ~(mask << pos)) | ((mask & MIPS.registers[Rs]) << pos);
+}
+
+void NOR(regAddr& Rd, regAddr& Rs, regAddr& Rt) { MIPS.registers[Rd] = ~(MIPS.registers[Rs] | MIPS.registers[Rt]); }
+
+void OR(regAddr& Rd, regAddr& Rs, regAddr& Rt) { MIPS.registers[Rd] = MIPS.registers[Rs] | MIPS.registers[Rt]; }
+
+void ORI(regAddr& Rd, regAddr& Rs, uint16_t const16){ MIPS.registers[Rd] = MIPS.registers[Rs] | const16; }
+
+void WSBH(regAddr& Rd, regAddr& Rs)
+{
+    uint32_t oprnd = MIPS.registers[Rs];
+
+    MIPS.registers[Rd] = 
+        ((oprnd & 0xFF000000) >> 8) |
+        ((oprnd & 0x00FF0000) << 8) |
+        ((oprnd & 0x0000FF00) >> 8) |
+        ((oprnd & 0x000000FF) << 8);
+
+}
+
+void XOR(regAddr& Rd, regAddr& Rs, regAddr& Rt) { MIPS.registers[Rd] = MIPS.registers[Rs] ^ MIPS.registers[Rt]; }
+
+void XORI(regAddr& Rd, regAddr& Rs, uint16_t const16){ MIPS.registers[Rd] = MIPS.registers[Rs] ^ const16; }
+
+void MOVN(regAddr& Rd, regAddr& Rs, regAddr& Rt) { if(MIPS.registers[Rt]) MIPS.registers[Rd] = MIPS.registers[Rs]; }
+
+void MOVZ(regAddr& Rd, regAddr& Rs, regAddr& Rt) { if(not MIPS.registers[Rt]) MIPS.registers[Rd] = MIPS.registers[Rs]; }
+
+void SLT(regAddr& Rd, regAddr& Rs, regAddr& Rt) // yet to add overflow trap
+{
+    int32_t a = static_cast<int32_t>(MIPS.registers[Rs]);
+    int32_t b = static_cast<int32_t>(MIPS.registers[Rt]);
+
+    MIPS.registers[Rd] = (a < b) ? 1 : 0;
+}
+
+void SLTI(regAddr& Rd, regAddr& Rs, uint16_t const16) // yet to add overflow trap
+{
+    int32_t a = static_cast<int32_t>(MIPS.registers[Rs]);
+    int32_t b = static_cast<int16_t>(const16); // implicit casting will do sign extension after static cast
+
+    MIPS.registers[Rd] = (a < b) ? 1 : 0;
+}
+
+void SLTIU(regAddr& Rd, regAddr& Rs, uint16_t const16) { MIPS.registers[Rd] = (MIPS.registers[Rs] < const16) ? 1 : 0; }
+
+void SLTU(regAddr& Rd, regAddr& Rs, regAddr& Rt) { MIPS.registers[Rd] = (MIPS.registers[Rs] < MIPS.registers[Rt]) ? 1 : 0; }
+
+void DIV(regAddr& Rs, regAddr& Rt) // yet to set the instructions up in case of divide by zero or overflow conditions
+{
+    int32_t a = static_cast<int32_t>(MIPS.registers[Rs]);
+    int32_t b = static_cast<int32_t>(MIPS.registers[Rt]);
+
+    MIPS.LO = a/b;
+    MIPS.HI = a%b;
+}
+
+void DIVU(regAddr& Rs, regAddr& Rt) // yet to set the instructions up in case of divide by zero or overflow conditions
+{
+    uint32_t a = MIPS.registers[Rs];
+    uint32_t b = MIPS.registers[Rt];
+
+    MIPS.LO = a/b;
+    MIPS.HI = a%b;
+}
+
+void MADD(regAddr& Rs, regAddr& Rt)
+{
+    long long a = static_cast<int32_t>(MIPS.registers[Rs]);
+    long long b = static_cast<int32_t>(MIPS.registers[Rt]);
+    long long ac = static_cast<long long>((static_cast<unsigned long long>(MIPS.HI) << 32) | MIPS.LO);
+    
+    ac += a*b;
+    MIPS.HI = ac >> 32;
+    MIPS.LO = 0xFFFFFFFF & ac;
+}
+
+void MADDU(regAddr& Rs, regAddr& Rt)
+{
+    unsigned long long a = MIPS.registers[Rs];
+    unsigned long long b = MIPS.registers[Rt];
+    unsigned long long ac = (static_cast<unsigned long long>(MIPS.HI) << 32) | MIPS.LO;
+    
+    ac += a*b;
+    MIPS.HI = ac >> 32;
+    MIPS.LO = 0xFFFFFFFF & ac;
+}
+
+void MSUB(regAddr& Rs, regAddr& Rt)
+{
+    long long a = static_cast<int32_t>(MIPS.registers[Rs]);
+    long long b = static_cast<int32_t>(MIPS.registers[Rt]);
+    long long ac = static_cast<long long>((static_cast<unsigned long long>(MIPS.HI) << 32) | MIPS.LO);
+    
+    ac -= a*b;
+    MIPS.HI = ac >> 32;
+    MIPS.LO = 0xFFFFFFFF & ac;
+}
+
+void MSUBU(regAddr& Rs, regAddr& Rt)
+{
+    unsigned long long a = MIPS.registers[Rs];
+    unsigned long long b = MIPS.registers[Rt];
+    long long ac = static_cast<long long>((static_cast<unsigned long long>(MIPS.HI) << 32) | MIPS.LO);
+    
+    ac -= a*b; // have to research and check if this works for extreme values
+    MIPS.HI = ac >> 32;
+    MIPS.LO = 0xFFFFFFFF & ac;
+}
+
+void MUL(regAddr& Rd, regAddr& Rs, regAddr& Rt)
+{
+    long long a = static_cast<int32_t>(MIPS.registers[Rs]);
+    long long b = static_cast<int32_t>(MIPS.registers[Rt]);
+    MIPS.registers[Rd] = static_cast<uint32_t>(a*b);
+}
+
+void MULT(regAddr& Rs, regAddr& Rt)
+{
+    long long a = static_cast<int32_t>(MIPS.registers[Rs]);
+    long long b = static_cast<int32_t>(MIPS.registers[Rt]);
+    
+    long long ac = a*b; // have to research and check if this works for extreme values
+    MIPS.HI = ac >> 32;
+    MIPS.LO = 0xFFFFFFFF & ac;
+}
+
+void MULTU(regAddr& Rs, regAddr& Rt)
+{
+    unsigned long long a = static_cast<uint32_t>(MIPS.registers[Rs]);
+    unsigned long long b = static_cast<uint32_t>(MIPS.registers[Rt]);
+    
+    unsigned long long ac = a*b; // have to research and check if this works for extreme values
+    MIPS.HI = ac >> 32;
+    MIPS.LO = 0xFFFFFFFF & ac;
+}
+
+void MFHI(regAddr& Rd) { MIPS.registers[Rd] = MIPS.HI; }
+void MFLO(regAddr& Rd) { MIPS.registers[Rd] = MIPS.LO; }
+void MTHI(regAddr& Rd) { MIPS.HI = MIPS.registers[Rd]; }
+void MTLO(regAddr& Rd) { MIPS.LO = MIPS.registers[Rd]; }

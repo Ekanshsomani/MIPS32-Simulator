@@ -8,57 +8,57 @@ Notes:
 ### Arithmetic Operations
 
 ```Markdown
-| **Instruction**       | **Binary Form**                                                           |
-|-----------------------|---------------------------------------------------------------------------|
-| `ADD RD, RS, RT`      | 000000 | rs: XXXXX | rt: XXXXX | rd: XXXXX | 00000 | 100000               |
-| `ADDI RD, RS, CONST16`| 001000 | rs: XXXXX | rt: XXXXX | immediate: XXXXXXXXXXXXXXXX              |
-| `ADDIU RD,RS, CONST16`| 001001 | rs: XXXXX | rt: XXXXX | immediate: XXXXXXXXXXXXXXXX              |
-| `ADDU RD, RS, RT`     | 000000 | rs: XXXXX | rt: XXXXX | rd: XXXXX | 00000 | 100001               |
-| `CLO RD, RS`          | 011100 | rs: XXXXX | rt: 00000 | rd: XXXXX | 00000 | 100001               |
-| `CLZ RD, RS`          | 011100 | rs: XXXXX | rt: 00000 | rd: XXXXX | 00000 | 100000               |
-| `LA RD, LABEL`        | Pseudo-instruction, typically translates to `LUI` and `ORI` instructions  |
-| `LI RD, IMM32`        | Pseudo-instruction, typically translates to `LUI` and `ORI` instructions  |
-| `LUI RD, CONST16`     | 001111 | rs: 00000 | rt: XXXXX | immediate: XXXXXXXXXXXXXXXX              |
-| `MOVE RD, RS`         | Pseudo-instruction, translates to `ADDU RD, RS, $zero`                    |
-| `NEGU RD, RS`         | Pseudo-instruction, translates to `SUBU RD, $zero, RS`                    |
-| `SEB RD, RS` (R2)     | 000000 | rs: XXXXX | rt: 00000 | rd: XXXXX | 00000 | 011010               |
-| `SEH RD, RS` (R2)     | 000000 | rs: XXXXX | rt: 00000 | rd: XXXXX | 00000 | 011011               |
-| `SUB RD, RS, RT`      | 000000 | rs: XXXXX | rt: XXXXX | rd: XXXXX | 00000 | 100010               |
-| `SUBU RD, RS, RT`     | 000000 | rs: XXXXX | rt: XXXXX | rd: XXXXX | 00000 | 100011               |
+| **Instruction**       | **Binary Form**                                                         |
+|-----------------------|-------------------------------------------------------------------------|
+| `ADD RD, RS, RT`      | 000000 | rs: XXXXX | rt: XXXXX | rd: XXXXX | 00000 | 100000             |
+| `ADDI RD, RS, CONST16`| 001000 | rs: XXXXX | rt: XXXXX | immediate: XXXXXXXXXXXXXXXX            |
+| `ADDIU RD,RS, CONST16`| 001001 | rs: XXXXX | rt: XXXXX | immediate: XXXXXXXXXXXXXXXX            |
+| `ADDU RD, RS, RT`     | 000000 | rs: XXXXX | rt: XXXXX | rd: XXXXX | 00000 | 100001             |
+| `CLO RD, RS`          | 011100 | rs: XXXXX | rt: 00000 | rd: XXXXX | 00000 | 100001             |
+| `CLZ RD, RS`          | 011100 | rs: XXXXX | rt: 00000 | rd: XXXXX | 00000 | 100000             |
+| `LA RD, LABEL`        | Pseudo-instruction, typically translates to `LUI` and `ORI` instructions|
+| `LI RD, IMM32`        | Pseudo-instruction, typically translates to `LUI` and `ORI` instructions|
+| `LUI RD, CONST16`     | 001111 | rs: 00000 | rt: XXXXX | immediate: XXXXXXXXXXXXXXXX            |
+| `MOVE RD, RS`         | Pseudo-instruction, translates to `ADDU RD, RS, $zero`                  |
+| `NEGU RD, RS`         | Pseudo-instruction, translates to `SUBU RD, $zero, RS`                  |
+| `SEB RD, RS` (R2)     | 000000 | rs: XXXXX | rt: 00000 | rd: XXXXX | 00000 | 011010             |
+| `SEH RD, RS` (R2)     | 000000 | rs: XXXXX | rt: 00000 | rd: XXXXX | 00000 | 011011             |
+| `SUB RD, RS, RT`      | 000000 | rs: XXXXX | rt: XXXXX | rd: XXXXX | 00000 | 100010             |
+| `SUBU RD, RS, RT`     | 000000 | rs: XXXXX | rt: XXXXX | rd: XXXXX | 00000 | 100011             |
 ```
 
 ### Shift and Rotate Operations
 
 ```Markdown
-| **Instruction**           | **Binary Form**                                                      |
-|---------------------------|----------------------------------------------------------------------|
-| `ROTR RD, RS, BITS5` (R2) | 000000 | rs: XXXXX | rt: XXXXX | rd: XXXXX | shamt: XXXXX | 000010   |
-| `ROTRV RD, RS, RT`  (R2)  | 000000 | rs: XXXXX | rt: XXXXX | rd: XXXXX | 00000 | 000110          |
-| `SLL RD, RS, SHIFT5`      | 000000 | 00000 | rt: XXXXX | rd: XXXXX | shamt: XXXXX | 000000       |
-| `SLLV RD, RS, RT`         | 000000 | rs: XXXXX | rt: XXXXX | rd: XXXXX | 00000 | 000100          |
-| `SRA RD, RS, SHIFT5`      | 000000 | 00000 | rt: XXXXX | rd: XXXXX | shamt: XXXXX | 000011       |
-| `SRAV RD, RS, RT`         | 000000 | rs: XXXXX | rt: XXXXX | rd: XXXXX | 00000 | 000111          |
-| `SRL RD, RS, SHIFT5`      | 000000 | 00000 | rt: XXXXX | rd: XXXXX | shamt: XXXXX | 000010       |
-| `SRLV RD, RS, RT`         | 000000 | rs: XXXXX | rt: XXXXX | rd: XXXXX | 00000 | 000110          |
+| **Instruction**           | **Binary Form**                                                    |
+|---------------------------|--------------------------------------------------------------------|
+| `ROTR RD, RS, BITS5` (R2) | 000000 | rs: XXXXX | rt: XXXXX | rd: XXXXX | shamt: XXXXX | 000010 |
+| `ROTRV RD, RS, RT`  (R2)  | 000000 | rs: XXXXX | rt: XXXXX | rd: XXXXX | 00000 | 000110        |
+| `SLL RD, RS, SHIFT5`      | 000000 | 00000 | rt: XXXXX | rd: XXXXX | shamt: XXXXX | 000000     |
+| `SLLV RD, RS, RT`         | 000000 | rs: XXXXX | rt: XXXXX | rd: XXXXX | 00000 | 000100        |
+| `SRA RD, RS, SHIFT5`      | 000000 | 00000 | rt: XXXXX | rd: XXXXX | shamt: XXXXX | 000011     |
+| `SRAV RD, RS, RT`         | 000000 | rs: XXXXX | rt: XXXXX | rd: XXXXX | 00000 | 000111        |
+| `SRL RD, RS, SHIFT5`      | 000000 | 00000 | rt: XXXXX | rd: XXXXX | shamt: XXXXX | 000010     |
+| `SRLV RD, RS, RT`         | 000000 | rs: XXXXX | rt: XXXXX | rd: XXXXX | 00000 | 000110        |
 ```
 
 ### Logical and BIT-Field Operations
 
 ```Markdown
-| **Instruction**       | **Binary Form**                                                   |
-|-----------------------|-------------------------------------------------------------------|
-| `AND RD, RS, RT`      | 000000 | rs: XXXXX | rt: XXXXX | rd: XXXXX | 00000 | 100100       |
-| `ANDI RD, RS, CONST16`| 001100 | rs: XXXXX | rt: XXXXX | immediate: XXXXXXXXXXXXXXXX      |
-| `EXTR2 RD, RS, P, S`  | Custom instruction, depends on specific implementation            |
-| `INSR2 RD, RS, P, S`  | Custom instruction, depends on specific implementation            |
-| `NOP`                 | 000000 | 00000 | 00000 | 00000 | 00000 | 000000                   |
-| `NOR RD, RS, RT`      | 000000 | rs: XXXXX | rt: XXXXX | rd: XXXXX | 00000 | 100111       |
-| `NOT RD, RS`          | Pseudo-instruction, translates to `NOR RD, RS, $zero`             |
-| `OR RD, RS, RT`       | 000000 | rs: XXXXX | rt: XXXXX | rd: XXXXX | 00000 | 100101       |
-| `ORI RD, RS, CONST16` | 001101 | rs: XXXXX | rt: XXXXX | immediate: XXXXXXXXXXXXXXXX      |
-| `WSBHR2 RD, RS`       | Custom instruction, depends on specific implementation            |
-| `XOR RD, RS, RT`      | 000000 | rs: XXXXX | rt: XXXXX | rd: XXXXX | 00000 | 100110       |
-| `XORI RD, RS, CONST16`| 001110 | rs: XXXXX | rt: XXXXX | immediate: XXXXXXXXXXXXXXXX      |
+| **Instruction**       | **Binary Form**                                                    |
+|-----------------------|--------------------------------------------------------------------|
+| `AND RD, RS, RT`      | 000000 | rs: XXXXX | rt: XXXXX | rd: XXXXX | 00000 | 100100        |
+| `ANDI RD, RS, CONST16`| 001100 | rs: XXXXX | rt: XXXXX | immediate: XXXXXXXXXXXXXXXX       |
+| `EXT RT, RS, P, S`(R2)| 011111 | rs: XXXXX | rt: XXXXX | size: XXXXX | pos: XXXXX | 000000 |
+| `INS RT, RS, P, S`(R2)| 011111 | rs: XXXXX | rt: XXXXX | size: XXXXX | pos: XXXXX | 000100 |
+| `NOP`                 | Pseudo-instruction, translates to `SLL r0, r0, 0`                  |
+| `NOR RD, RS, RT`      | 000000 | rs: XXXXX | rt: XXXXX | rd: XXXXX | 00000 | 100111        |
+| `NOT RD, RS`          | Pseudo-instruction, translates to `NOR RD, RS, $zero`              |
+| `OR RD, RS, RT`       | 000000 | rs: XXXXX | rt: XXXXX | rd: XXXXX | 00000 | 100101        |
+| `ORI RD, RS, CONST16` | 001101 | rs: XXXXX | rt: XXXXX | immediate: XXXXXXXXXXXXXXXX       |
+| `WSBH RD, RS` (R2)    | 011111 | 00000 | rt: XXXXX | rd: XXXXX | 00010 | 100000            |
+| `XOR RD, RS, RT`      | 000000 | rs: XXXXX | rt: XXXXX | rd: XXXXX | 00000 | 100110        |
+| `XORI RD, RS, CONST16`| 001110 | rs: XXXXX | rt: XXXXX | immediate: XXXXXXXXXXXXXXXX       |
 ```
 
 ### condition testing and conditional move operations
