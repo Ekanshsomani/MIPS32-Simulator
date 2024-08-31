@@ -9,3 +9,8 @@ void Processor::bootUp()
     
     registers[0] = 0;
 }
+
+void Processor::hardCode()
+{
+    registers[0] = 0;
+}
