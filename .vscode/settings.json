@@ -1,5 +1,8 @@
 {
     "files.associations": {
         "cstdint": "cpp"
+    },
+    "[markdown]": {
+        "editor.cursorSurroundingLines": 0
     }
 }
