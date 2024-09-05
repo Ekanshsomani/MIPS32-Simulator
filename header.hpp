@@ -25,17 +25,16 @@ private:
 class Memory
 {
 public:
-	  void createMemory(uint32_t mem_size);
-	  void loadInstructions(const uint32_t& start_addr, const uint32_t& end_addr);
-	  uint32_t get_Data(const uint32_t& addr);
+	void createMemory(uint32_t mem_size);
+	void loadInstructions(const uint32_t& start_addr, const uint32_t& end_addr);
+	uint32_t get_Data(const uint32_t& addr);
 private:
-	  vector<uint32_t> mem;
+	vector<uint8_t> mem;
     uint32_t memory_size;
 };
 
 Processor MIPS;
-Processor cp0; // we can use inheritance and give cp0 and cp1 inherited 
-Processor cp1; // classes if they need something specific that MIPS can't have
+Processor cp0; // use inheritance and give cp0 inherited classes if they need something specific that MIPS can't have
 Memory RAM;
 
 // IO will either end up being an instance object of the parent memory class

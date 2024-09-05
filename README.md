@@ -1,5 +1,13 @@
 # MIPS Processor Details
 
+## Instruction Field Formats
+
+### R-type CPU Instruction format
+
+| Cell1 | Cell2 | Cell3 |
+|-------|-------|-------|
+| merge right  ||       |
+
 ## Instruction Set Release 2
 
 Notes:
@@ -359,6 +367,51 @@ These binary forms are simplified representations and may vary based on the spec
 
 Unsigned here is again a misnomer that signifies no overflow trap.
 
+### Miscellaneous Instructions
+
+**Serialization**
+
+| **Instruction**       |
+|-----------------------|
+| SYNC | SPECIAL: 000000 | 15 zeros | stype: XXXXX | SYNC: 001111 |
+| SYNCI | REGIMM: 000001 | BASE: XXXXX | SYNCI: 11111 | offset: 16 bit |
+
+**Exception**
+
+| **Instruction**       |
+|-----------------------|
+| BREAK | SPECIAL: 000000 | code: 20 bits | BREAK: 001101 |
+| SYSCALL | SPECIAL: 000000 | code: 20 bits | SYSCALL: 001100 |
+
+
+
+Each of the below instructions is called as something like `TEQ Rs Rt`. Binary from is: `SPECIAL: 000000 | rs: XXXXX | rt: XXXXX | code: 10 bits | func |`
+
+| **Instruction** | **Func** |
+|------|--------|
+| TEQ  | 110100 |
+| TGE  | 110000 |
+| TGEU | 110001 |
+| TLT  | 110010 |
+| TLTU | 110100 |
+| TNE  | 110100 |
+
+**Conditional Move**
+
+Assembly: `SELEQZ Rd, Rs, Rt` | Binary: `SPEICAL: 000000 | Rs: XXXXX | Rt: XXXXX | Rd: XXXXX | 00000| func`
+
+| **Instruction** | **Func** |
+|--------|--------|
+| SELEQZ | 110101 |
+| SELNEZ | 110111 |
+
+**PREFETCH**
+
+`PREF hint, offset (base)` :  SPECIAL3: 011111 | base: XXXXX | hint: XXXXX | offset: 9 bits | 0 | PREF: 110101 |
+`NOP`: All zero
+`SSNOP`: SHAMT: 1 (executes SLL)
+
+
 ## Registers
 
 - 32 General purpose registers
@@ -412,3 +465,12 @@ When executing a branch instruction, the very next instruction (called delay - s
 - Traditional model for implementing a processor does it in five stages: Fetch, Decode, Execute, Memory, and Write-back. This processor simulator however will only have one single stage. It will take instructions from memory and execute and store back in the same stage. This decision enables me to focus on the core concepts of the computer-architecture and enable better learning.
 - We will have coprocessors cp0, and cp1 as extensions along with the processor in our simulator.
 
+- Instructions are:
+  - I-Type: op(6) rs(5) rt(5) immediate(16)
+  - J-Type: op(6) target(26)
+  - R-type: op(6) rs(5) rt(5) rd(5) re(5) funct(6)
+  
+
+Refs:
+- https://ablconnect.harvard.edu/files/ablconnect/files/mips_instruction_set.pdf
+- 
