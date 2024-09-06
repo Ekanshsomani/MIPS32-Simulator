@@ -174,7 +174,7 @@ void BITSWAP(regAddr& Rd, regAddr& Rt)
 
 // Multiply and Divide Instructions
 
-void MUL(regAddr& Rs, regAddr& Rt, regAddr& Rd)
+void MUL(regAddr& Rd, regAddr& Rs, regAddr& Rt)
 {
     int64_t a = static_cast<int32_t>(MIPS.registers[Rs]);
     int64_t b = static_cast<int32_t>(MIPS.registers[Rt]);
@@ -182,7 +182,7 @@ void MUL(regAddr& Rs, regAddr& Rt, regAddr& Rd)
     MIPS.registers[Rd] = ((a * b) & 0xFFFFFFFF);
 }
 
-void MUH(regAddr& Rs, regAddr& Rt, regAddr& Rd)
+void MUH(regAddr& Rd, regAddr& Rs, regAddr& Rt)
 {
     int64_t a = static_cast<int32_t>(MIPS.registers[Rs]);
     int64_t b = static_cast<int32_t>(MIPS.registers[Rt]);
@@ -190,24 +190,54 @@ void MUH(regAddr& Rs, regAddr& Rt, regAddr& Rd)
     MIPS.registers[Rd] = ((a * b) >> 32);
 }
 
-void MULU(regAddr& Rs, regAddr& Rt, regAddr& Rd)
+void MULU(regAddr& Rd, regAddr& Rs, regAddr& Rt)
     { MIPS.registers[Rd] = ((uint64_t(MIPS.registers[Rs]) * uint64_t(MIPS.registers[Rt])) & 0xFFFFFFFF); }
 
-void MUHU(regAddr& Rs, regAddr& Rt, regAddr& Rd)
+void MUHU(regAddr& Rd, regAddr& Rs, regAddr& Rt)
     { MIPS.registers[Rd] = ((uint64_t(MIPS.registers[Rs]) * uint64_t(MIPS.registers[Rt])) >> 32); }
 
 // the program currently stops if value at Rt is zero and raises an exception. I need to change it so that it keeps executing.
 // probably change the action to continue in the error specification there.
 
-void DIV(regAddr& Rs, regAddr& Rt, regAddr& Rd)
+void DIV(regAddr& Rd, regAddr& Rs, regAddr& Rt)
     { MIPS.registers[Rd] = static_cast<int32_t>(MIPS.registers[Rs]) / static_cast<int32_t>(MIPS.registers[Rt]); }
 
-void MOD(regAddr& Rs, regAddr& Rt, regAddr& Rd)
+void MOD(regAddr& Rd, regAddr& Rs, regAddr& Rt)
     { MIPS.registers[Rd] = static_cast<int32_t>(MIPS.registers[Rs]) % static_cast<int32_t>(MIPS.registers[Rt]); }
 
-void DIVU(regAddr& Rs, regAddr& Rt, regAddr& Rd)
+void DIVU(regAddr& Rd, regAddr& Rs, regAddr& Rt)
     { MIPS.registers[Rd] = MIPS.registers[Rs] / MIPS.registers[Rt]; }
 
-void MODU(regAddr& Rs, regAddr& Rt, regAddr& Rd)
+void MODU(regAddr& Rd, regAddr& Rs, regAddr& Rt)
     { MIPS.registers[Rd] = MIPS.registers[Rs] % MIPS.registers[Rt]; }
 
+
+// Address Computation and Large Constant
+
+void LSA(regAddr& Rd, regAddr& Rs, regAddr& Rt, regAddr& sa)
+    { MIPS.registers[Rd] = (MIPS.registers[Rs] << (sa + 1)) + MIPS.registers[Rt]; }
+
+void AUI(regAddr& Rd, regAddr& Rs, uint16_t& immediate)
+    { MIPS.registers[Rd] = int32_t(MIPS.registers[Rs]) + int32_t(uint32_t(immediate) << 16); }
+
+// the below instructions are based on the hope that pc has moved on sequentially in each fetch after fetching this instruction
+// if not, and some villian can make it jump before this instruction is completed, then you need to save the code.
+
+void ADDIUPC(regAddr& Rd, uint32_t& immediate)
+{
+    uint32_t isNeg = immediate & 0x40000;
+    MIPS.registers[Rd] = MIPS.PC - 8 + (((immediate & 0x3FFFF) << 2) | isNeg);
+}
+
+// its details in manual only says add to pc (i'm assuming that manual doesn't imply two different pc's between ADDIUPC
+// and these two)
+void ALUIPC(regAddr& Rd, uint16_t& immediate) 
+    {MIPS.registers[Rd] = (MIPS.PC - 8 + int32_t(uint32_t(immediate) << 16)) & 0xFFFF0000;}
+
+void AUIPC(regAddr& Rd, uint16_t& immediate)
+    {MIPS.registers[Rd] = MIPS.PC - 8 + int32_t(uint32_t(immediate) << 16);}
+
+// two miscellaneous instructions (weirdly simple)
+void SELNEZ(regAddr& Rd, regAddr& Rs, regAddr& Rt){ if(MIPS.registers[Rt]) MIPS.registers[Rd] = MIPS.registers[Rs]; }
+
+void SELEQZ(regAddr& Rd, regAddr& Rs, regAddr& Rt){ if(not MIPS.registers[Rt]) MIPS.registers[Rd] = MIPS.registers[Rs]; }

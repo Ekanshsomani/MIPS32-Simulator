@@ -327,17 +327,13 @@ BOVC and BNVC have op-codes `001000` and `011000` respectively. They have rs, rt
 
 ### Address Computation and Large Constant Instructions 
 
-| **Instruction**       |
-|-----------------------|
-| LSA |
-| DLSA |
-| AUI |
-| DAUI |
-| DAHI |
-| DATI |
-| ADDIUPC |
-| AUIPC |
-| ALUIPC |
+| **Instruction** | **Format**                  | op     | func   |
+|-----------------|-----------------------------|--------|--------|
+| LSA             | rs(5) rt(5) rd(5) 000 sa(2) | 000000 | 000101 |
+| AUI             | rs(5) rd(5) immediate(16)   | 001111 ||
+| ADDIUPC         | rs(5) 00 immediate(19)      | 111011 ||
+| AUIPC           | rs(5) 11110 immediate(16)   | 111011 ||
+| ALUIPC          | rs(5) 11111 immediate(16)   | 111011 ||
 
 Unsigned here is again a misnomer that signifies no overflow trap.
 
@@ -356,8 +352,6 @@ Unsigned here is again a misnomer that signifies no overflow trap.
 |-----------------------|
 | BREAK | SPECIAL: 000000 | code: 20 bits | BREAK: 001101 |
 | SYSCALL | SPECIAL: 000000 | code: 20 bits | SYSCALL: 001100 |
-
-
 
 Each of the below instructions is called as something like `TEQ Rs Rt`. Binary from is: `SPECIAL: 000000 | rs: XXXXX | rt: XXXXX | code: 10 bits | func |`
 
