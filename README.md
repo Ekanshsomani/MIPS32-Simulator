@@ -2,11 +2,15 @@
 
 ## Instruction Field Formats
 
-### R-type CPU Instruction format
-
-| Cell1 | Cell2 | Cell3 |
-|-------|-------|-------|
-| merge right  ||       |
+- **R-Type:** op: 6 | rs: 5 | rt: 5 | rd: 5 | sa: 5 | func: 6 |
+- **I-Type:**
+  - op: 6 | rs: 5 | rt: 5 | immediate: 16 |
+  - op: 6 | rd: 5 | offset: 21 |
+  - op: 6 | offset: 26 |
+  - op: 6 | rs: 5 | rt: 5 | rd: 5 | offset: 11 |
+  - op: 6 | base: 5 | rt: 5 | offset: 10 | func: 6 |
+- **J-Type:**
+  - op: 6 | instr_index: 26 |
 
 ## Instruction Set Release 2
 
@@ -166,10 +170,11 @@ Ref: https://en.wikibooks.org/wiki/MIPS_Assembly/Instruction_Formats
 
 ## Instruction Set Release 6
 
+Instructions not mentioned in volume-I A but are there in release-6: SEB, SEH, EXT, INS, WSBH, MOVN, MOVZ
+
 Notes:
 - LWUPC, LDPC (load and store instructions) mentioned in Volume-I A but not found in volume-II A of MIPS Manual. Thus not included here.
-- The term “unsigned” in ADDIU, ADDU is a misnomer; this operation is 32-bit modulo arithmetic that does not trap on 
-overflow.
+- The term “unsigned” in ADDIU, ADDU is a misnomer; this operation is 32-bit modulo arithmetic that does not trap on overflow.
 
 - Calculative Instructions:
   - ALU
@@ -195,11 +200,12 @@ overflow.
 |-----------------------|--------|-------|-------|------------------|
 | `ADDIU RD,RS, CONST16`| 001001 | XXXXX | XXXXX | XXXXXXXXXXXXXXXX |
 | `ANDI RD, RS, CONST16`| 001100 | XXXXX | XXXXX | XXXXXXXXXXXXXXXX |
-| `LUI RD, CONST16`     | 001111 | 00000 | XXXXX | XXXXXXXXXXXXXXXX |
 | `ORI RD, RS, CONST16` | 001101 | XXXXX | XXXXX | XXXXXXXXXXXXXXXX |
 | `SLTI RD, RS, CONST16`| 001010 | XXXXX | XXXXX | XXXXXXXXXXXXXXXX |
 | `SLTIU RD,RS, CONST16`| 001011 | XXXXX | XXXXX | XXXXXXXXXXXXXXXX |
 | `XORI RD, RS, CONST16`| 001110 | XXXXX | XXXXX | XXXXXXXXXXXXXXXX |
+
+There is also suppose to be an LUI instruction above. But it is to be interpreted and done as AUI anyways so...
 
 **3 Operands:**
 
@@ -226,8 +232,8 @@ overflow.
 
 | **Instruction**       | op     | rs    | rt    | rd    | shamt | func   |
 |-----------------------|--------|-------|-------|-------|-------|--------|
-| `ALIGN ` |
-| `BITSWAP` |
+| `ALIGN RD, RS, RT, BP`| 011111 | XXXXX | XXXXX | XXXXX | 010XX | 100000 |
+| `BITSWAP RD, RT`      | 011111 | 00000 | XXXXX | XXXXX | 00000 | 100000 |
 | `ROTR RD, RS, BITS5`  | 000000 | XXXXX | XXXXX | XXXXX | XXXXX | 000010 |
 | `ROTRV RD, RS, RT`    | 000000 | XXXXX | XXXXX | XXXXX | 00000 | 000110 |
 | `SLL RD, RS, SHIFT5`  | 000000 | 00000 | XXXXX | XXXXX | XXXXX | 000000 |
@@ -239,24 +245,19 @@ overflow.
 
 ### Multiple and Divide Instructions
 
-| **Instruction**       |
-|-----------------------|
-| `MUL` |
-| `MUH` |
-| `MULU`|
-| `MUHU`|
-| `DMUL`|
-| `DMUH`|
-|`DMULU`|
-|`DMUHU`|
-| `DIV` |
-| `MOD` |
-| `DIVU`|
-| `MODU`|
-| `DDIV`|
-| `DMOD`|
-|`DDIVU`|
-|`DMODU`|
+Below instructions have binary of the form: SPECIAL: 000000 | Rs: 5 | Rt: 5 | Rd: 5 | func: 5 | sop: 6
+
+| **Instruction**   | func  | sop    |
+|-------------------|-------|--------|
+| `MUL RD, RS, RT`  | 00010 | 011000 |
+| `MUH RD, RS, RT`  | 00011 | 011000 |
+| `MULU RD, RS, RT` | 00010 | 011001 |
+| `MUHU RD, RS, RT` | 00011 | 011001 |
+| `DIV RD, RS, RT`  | 00010 | 011010 |
+| `MOD RD, RS, RT`  | 00011 | 011010 |
+| `DIVU RD, RS, RT` | 00010 | 011011 |
+| `MODU RD, RS, RT` | 00011 | 011011 |
+
 
 ### Jump and Branch Instructions
 
@@ -265,10 +266,10 @@ overflow.
 `J ADDR28`: 000010 and `JAL ADDR28`: 000011 with the 28 bit address after that.
 
 **Unconditional Jump Absolute Address:**
-| **Instruction**       | op     | rs    | blank | rd    | blank | func   |
+| **Instruction**       | op     | rs    | blank | rd    | hint  | func   |
 |-----------------------|--------|-------|-------|-------|-------|--------|
-| `JALR RD, RS`         | 000000 | XXXXX | 00000 | XXXXX | 00000 | 001001 |
-| `JALR.HB RD, RS`      | 000000 | XXXXX | 00000 | XXXXX |
+| `JALR RD, RS`         | 000000 | XXXXX | 00000 | XXXXX | XXXXX | 001001 |
+| `JALR.HB RD, RS`      | 000000 | XXXXX | 00000 | XXXXX | 1XXXX | 001001 |
 
 **PC-Relative Branch Instructions:**
 
@@ -281,6 +282,8 @@ overflow.
 | `BLEZ RS, OFF18`      | 000110 | XXXXX | 00000 | XXXXXXXXXXXXXXXXXX |
 | `BLTZ RS, OFF18`      | 000001 | XXXXX | 00000 | XXXXXXXXXXXXXXXXXX |
 
+The below 3 don't have forbidden slot in the very next one, and won't cause a reserved instruction exception:
+
 **Unconditional Branch and Call:** Called as  `BC offset` or `BALC offset` with opcodes as  110010 and 111010 respectively. `offset` is 26 bits.
 
 **Indexed Jumps (register + unscaled offset):** 
@@ -292,64 +295,35 @@ overflow.
 
 **Compare to Zero Instructions:**
 
-| Instruction | Description | Binary Form |
-|-------------|-------------|-------------|
-| BEQZC       | Compact Branch if Equal to Zero | `000001 sssss 00000 0000000000000001` |
-| BNEZC       | Compact Branch if Not Equal to Zero | `000001 sssss 00001 0000000000000001` |
-| BLEZC       | Compact Branch if Less Than or Equal to Zero | `000001 sssss 00010 0000000000000001` |
-| BGEZC       | Compact Branch if Greater Than or Equal to Zero | `000001 sssss 00011 0000000000000001` |
-| BGTZC       | Compact Branch if Greater Than Zero | `000001 sssss 00100 0000000000000001` |
-| BLTZC       | Compact Branch if Less Than Zero | `000001 sssss 00101 0000000000000001` |
+BEQZC, BNEZC of the type op(6) | rs(5) | offset (21). The rest have rs and rt, and offset of length 16. A lot of transaction that end up translating to other in binary and work fine are not mentioned here. Since I won't have to simulate those.
+
+| Instruction | op     |
+|-------------|--------|
+| BEQZC       | 110110 |
+| BNEZC       | 111110 |
+| BEQC        | 001000 |
+| BNEC        | 011000 |
+| BLTC        | 010111 |
+| BGEC        | 010110 |
+| BLTUC       | 000111 |
+| BGEUC       | 000110 |
 
 **Conditional Calls, Compare Against Zero:**
 
-| Instruction | Description | Binary Form |
-|-------------|-------------|-------------|
-| BEQZALC     | Compact Branch if Equal to Zero, And Link | `000001 sssss 01000 0000000000000001` |
-| BNEZALC     | Compact Branch if Not Equal to Zero, And Link | `000001 sssss 01001 0000000000000001` |
-| BLEZALC     | Compact Branch if Less Than or Equal to Zero, And Link | `000001 sssss 01010 0000000000000001` |
-| BGEZALC     | Compact Branch if Greater Than or Equal to Zero, And Link | `000001 sssss 01011 0000000000000001` |
-| BGTZALC     | Compact Branch if Greater Than Zero, And Link | `000001 sssss 01100 0000000000000001` |
-| BLTZALC     | Compact Branch if Less Than Zero, And Link | `000001 sssss 01101 0000000000000001` |
+Offset is 16 bits long in all the below instructions. And rt can never be zero.
 
-**Compare Equality (Register-Register):**
-
-| Instruction | Description | Binary Form |
-|-------------|-------------|-------------|
-| BEQC        | Compact Branch if Equal | `000001 sssss ttttt 0000000000000001` |
-| BNEC        | Compact Branch if Not Equal | `000001 sssss ttttt 0000000000000010` |
-
-**Compare Signed (Register-Register):**
-
-| Instruction | Description | Binary Form |
-|-------------|-------------|-------------|
-| BGEC        | Compact Branch if Greater than or Equal | `000001 sssss ttttt 0000000000000011` |
-| BLTC        | Compact Branch if Less Than | `000001 sssss ttttt 0000000000000100` |
-
-**Compare Unsigned (Register-Register):**
-
-| Instruction | Description | Binary Form |
-|-------------|-------------|-------------|
-| BGEUC       | Compact Branch if Greater than or Equal, Unsigned | `000001 sssss ttttt 0000000000000101` |
-| BLTUC       | Compact Branch if Less Than, Unsigned | `000001 sssss ttttt 0000000000000110` |
-
-**Aliases Obtained by Reversing Operands:**
-
-| Instruction | Description | Binary Form |
-|-------------|-------------|-------------|
-| BLEC        | Compact Branch if Less Than or Equal | `000001 sssss ttttt 0000000000000111` |
-| BGTC        | Compact Branch if Greater Than | `000001 sssss ttttt 0000000000001000` |
-| BLEUC       | Compact Branch if Less than or Equal, Unsigned | `000001 sssss ttttt 0000000000001001` |
-| BGTUC       | Compact Branch if Greater Than, Unsigned | `000001 sssss ttttt 0000000000001010` |
+| Instruction | op     | rs    |
+|-------------|--------|-------|
+| BEQZALC     | 001000 | 00000 |
+| BNEZALC     | 011000 | 00000 |
+| BLEZALC     | 000110 | 00000 | 
+| BGEZALC     | 000110 | rt    |
+| BGTZALC     | 000111 | 00000 |
+| BLTZALC     | 000111 | rt    |
 
 **Branch if Overflow:**
 
-| Instruction | Description | Binary Form |
-|-------------|-------------|-------------|
-| BOVC        | Compact Branch if Overflow (word) | `000001 sssss ttttt 0000000000001011` |
-| BNVC        | Compact Branch if No overflow, word | `000001 sssss ttttt 0000000000001100` |
-
-These binary forms are simplified representations and may vary based on the specific implementation and context. If you need more detailed or specific binary encodings, please refer to the MIPS32 Release 6 Instruction Set Manual.
+BOVC and BNVC have op-codes `001000` and `011000` respectively. They have rs, rt, and offset(16).
 
 ### Address Computation and Large Constant Instructions 
 

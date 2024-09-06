@@ -16,9 +16,7 @@ public:
     void hardCode(); // run this command after each cycle
 
     vector<uint32_t> registers;
-    uint32_t HI, LO, cycle;
-
-private:
+    uint32_t HI, LO, cycle, PC;
     static const int sp = 29, gp = 28, ra = 31;
 };
 
