@@ -7,6 +7,11 @@ using namespace std;
 
 typedef const uint8_t regAddr;
 
+struct Channels
+{
+    uint32_t data;
+    bool control;
+};
 
 class Processor
 {
@@ -18,21 +23,21 @@ public:
     vector<uint32_t> registers;
     uint32_t HI, LO, cycle, PC;
     static const int sp = 29, gp = 28, ra = 31;
+    Channels dec_channel, ex_channel, mem_channel;
 };
 
 class Memory
 {
 public:
-	void createMemory(uint32_t mem_size);
-	void loadInstructions(const uint32_t& start_addr, const uint32_t& end_addr);
-	uint32_t get_Data(const uint32_t& addr);
+	void create_memory(uint32_t mem_size);
+	uint32_t read_word(const uint32_t& addr);
 private:
 	vector<uint8_t> mem;
     uint32_t memory_size;
 };
 
 Processor MIPS;
-Processor cp0; // use inheritance and give cp0 inherited classes if they need something specific that MIPS can't have
+Processor cp0; // use inheritance and give cp0 an inherited class if they need something specific that MIPS can't have
 Memory RAM;
 
 // IO will either end up being an instance object of the parent memory class
@@ -45,3 +50,4 @@ Memory IO;
 // of memory that our simulator can read. And there is another section of memory where
 // our simulator can write the output, and the program will be constantly reading that
 // memory and displaying that output on the screen.
+

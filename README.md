@@ -1,5 +1,24 @@
 # MIPS Processor Details
 
+## Datapath and Control
+
+- A simple clock edge triggered cycle. Four stages - fetch, decode, execute, memory. Each stage gets completed in one cycle irrelevant of the instrcution complexity.
+- I will have three different channels that are an abstract way of implementing data and control bus on the simulator:
+  - decode_channel
+    - 32-bit instruction
+    - is_execute_branch (1 bit, check yes if the next stage will try to execute a branch instruction in the next cycle)
+  - execute_channel
+    - actually_branching (1 bit, check yes, if branch instruction actually led to a jump.)
+  - mem_channel
+    - 32-bit address
+    - load or store (1 bit)
+- In each cycle, we execute the functions in following sequence:
+  - Store or load if there is anything in the mem_channel
+  - then execute if there is anything in the execute_channel. If a store/load instruction, push it on the mem_channel. If the instruction is branch and you do branch then check branching as yes in the decode channel, so that the next decoded instruction is discarded.
+  - decode if there is anything on the decode channel. If the instruction is branch, check execute_branch as yes. So that the if the very next instruction turns out to be reserved, then we can signal the reserved exception.
+  - fetch. Don't fetch if the execute_branch is set to yes in decode channel.
+- Flushing out stages in reverse ensures that the channels are clear for the previous stage.
+
 ## Instruction Field Formats
 
 - **R-Type:** op: 6 | rs: 5 | rt: 5 | rd: 5 | sa: 5 | func: 6 |
@@ -431,14 +450,8 @@ When executing a branch instruction, the very next instruction (called delay - s
 # Plan
 
 - Traditional model for implementing a processor does it in five stages: Fetch, Decode, Execute, Memory, and Write-back. This processor simulator however will only have one single stage. It will take instructions from memory and execute and store back in the same stage. This decision enables me to focus on the core concepts of the computer-architecture and enable better learning.
-- We will have coprocessors cp0, and cp1 as extensions along with the processor in our simulator.
-
-- Instructions are:
-  - I-Type: op(6) rs(5) rt(5) immediate(16)
-  - J-Type: op(6) target(26)
-  - R-type: op(6) rs(5) rt(5) rd(5) re(5) funct(6)
-  
-
+- We will have coprocessor cp0 extension the simulator.
+- 
 Refs:
 - https://ablconnect.harvard.edu/files/ablconnect/files/mips_instruction_set.pdf
 - 
