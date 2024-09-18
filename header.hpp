@@ -11,6 +11,7 @@ struct Channels
 {
     uint32_t data;
     uint8_t control;
+    bool addit;
 };
 
 class Processor
@@ -30,10 +31,11 @@ class Memory
 {
 public:
 	void create_memory(uint32_t mem_size);
-	uint32_t read_word(const uint32_t& addr);
+	uint32_t read(const uint32_t& addr);
+    void write(const uint32_t& addr, uint8_t byte);
+
 private:
 	vector<uint8_t> mem;
-    uint32_t memory_size;
 };
 
 Processor MIPS;

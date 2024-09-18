@@ -1,4 +1,4 @@
-#include <header.hpp>
+#include <funcs.hpp>
 
 using namespace std;
 
@@ -27,7 +27,7 @@ void CLO(regAddr& Rd, regAddr& Rs) { MIPS.registers[Rd] = __builtin_clz(~( MIPS.
 
 void CLZ(regAddr& Rd, regAddr& Rs) { MIPS.registers[Rd] = __builtin_clz(MIPS.registers[Rs]); }
 
-void SEB(regAddr& Rd, regAddr& Rs) 
+void SEB(regAddr& Rd, regAddr& Rs)
 { 
     MIPS.registers[Rd] = static_cast<uint32_t>(int32_t(
         static_cast<int8_t>(MIPS.registers[Rs])
@@ -231,7 +231,7 @@ void ADDIUPC(regAddr& Rd, uint32_t& immediate)
 
 // its details in manual only says add to pc (i'm assuming that manual doesn't imply two different pc's between ADDIUPC
 // and these two)
-void ALUIPC(regAddr& Rd, uint16_t& immediate) 
+void ALUIPC(regAddr& Rd, uint16_t& immediate)
     {MIPS.registers[Rd] = (MIPS.PC - 8 + int32_t(uint32_t(immediate) << 16)) & 0xFFFF0000;}
 
 void AUIPC(regAddr& Rd, uint16_t& immediate)
@@ -241,3 +241,57 @@ void AUIPC(regAddr& Rd, uint16_t& immediate)
 void SELNEZ(regAddr& Rd, regAddr& Rs, regAddr& Rt){ if(MIPS.registers[Rt]) MIPS.registers[Rd] = MIPS.registers[Rs]; }
 
 void SELEQZ(regAddr& Rd, regAddr& Rs, regAddr& Rt){ if(not MIPS.registers[Rt]) MIPS.registers[Rd] = MIPS.registers[Rs]; }
+
+// load and store instructions
+void LB(regAddr& Rt, uint16_t offset, regAddr& base)
+{
+    MIPS.mem_channel.data = MIPS.registers[base] + int16_t(offset);
+    MIPS.mem_channel.control = (0 << 5) | Rt;
+    MIPS.mem_channel.addit = 0;
+}
+
+void LBU(regAddr& Rt, uint16_t offset, regAddr& base)
+{
+    MIPS.mem_channel.data = MIPS.registers[base] + int16_t(offset);
+    MIPS.mem_channel.control = (0 << 5) | Rt;
+    MIPS.mem_channel.addit = 1;
+}
+
+void LH(regAddr& Rt, uint16_t offset, regAddr& base)
+{
+    MIPS.mem_channel.data = MIPS.registers[base] + int16_t(offset);
+    MIPS.mem_channel.control = (1 << 5) | Rt;
+    MIPS.mem_channel.addit = 0;
+}
+
+void LHU(regAddr& Rt, uint16_t offset, regAddr& base)
+{
+    MIPS.mem_channel.data = MIPS.registers[base] + int16_t(offset);
+    MIPS.mem_channel.control = (1 << 5) | Rt;
+    MIPS.mem_channel.addit = 1;
+}
+
+void LW(regAddr& Rt, uint16_t offset, regAddr& base)
+{
+    MIPS.mem_channel.data = MIPS.registers[base] + int16_t(offset);
+    MIPS.mem_channel.control = (3 << 5) | Rt;
+    MIPS.mem_channel.addit = 0;
+}
+
+void SB(regAddr& Rt, uint16_t offset, regAddr& base)
+{
+    MIPS.mem_channel.data = MIPS.registers[base] + int16_t(offset);
+    MIPS.mem_channel.control = (1 << 7) | (0 << 5) | Rt;
+}
+
+void SH(regAddr& Rt, uint16_t offset, regAddr& base)
+{
+    MIPS.mem_channel.data = MIPS.registers[base] + int16_t(offset);
+    MIPS.mem_channel.control = (1 << 7) | (1 << 5) | Rt;
+}
+
+void SW(regAddr& Rt, uint16_t offset, regAddr& base)
+{
+    MIPS.mem_channel.data = MIPS.registers[base] + int16_t(offset);
+    MIPS.mem_channel.control = (1 << 7) | (3 << 5) | Rt;
+}

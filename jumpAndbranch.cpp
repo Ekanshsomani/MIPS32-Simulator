@@ -1,9 +1,5 @@
-#include <header.hpp>
+#include <funcs.hpp>
 #include <tuple>
-
-// The pipeline executes backward from write back to fetch in each cycle
-// so we can just not do fetch when we decode an instruction to find its jump or branch
-// on to the next cycle we will do fetch after execution of jump and branch so everything is fine and dandy (yea!)
 
 void J(uint32_t instr_index) { MIPS.PC = (0xF0000000 & MIPS.PC) | (instr_index << 2); }
 
@@ -22,15 +18,15 @@ void JALR(regAddr& Rd, regAddr& Rs) // raise exception if target address is not 
 }
 
 
-void JALR_HB(regAddr& Rd, regAddr& Rs) 
+void JALR_HB(regAddr& Rd, regAddr& Rs)
 {
     // yet to implement a software barrier that resolves all execution and instruction hazards 
     // created by Coprocessor 0 state changes
     JALR(Rd, Rs);
 }
 
-// currently we are adding the offset to address of the instruction following the branch (delay slot one)
-// might have to change because of release-6 thing
+// currently we are adding the offset to address of the instruction following the
+//  branch (delay slot one)
 void _B18(uint16_t& offset) // this is for use in this file only
 {
     uint32_t isNeg = (0x8000 & offset) << 16;
@@ -47,7 +43,7 @@ void BGTZ(regAddr& Rs, uint16_t offset) { if(int32_t(MIPS.registers[Rs]) > 0) _B
 
 void BLEZ(regAddr& Rs, uint16_t offset) { if(int32_t(MIPS.registers[Rs]) <= 0) _B18(offset); }
 
-void BLEZ(regAddr& Rs, uint16_t offset) { if(int32_t(MIPS.registers[Rs]) < 0) _B18(offset); }
+void BLTZ(regAddr& Rs, uint16_t offset) { if(int32_t(MIPS.registers[Rs]) < 0) _B18(offset); }
 
 // the below don't have a forbidden slot. No reserved instruction exception.
 void BC(uint32_t offset) // this is _B28

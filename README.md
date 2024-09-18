@@ -14,7 +14,12 @@
     - Control (8 bit)
       - read or write (1 bit)
       - width (2 bit) (how much to read or write)
+        - 0 (1 byte)
+        - 1 (2 byte)
+        - 2
+        - 3 (4 byte)
       - regAddr (5 bit) (register to read from or write into)
+      - an additional bit to indicate whether to sign_extend (1) or not (0)
 - In each cycle, we execute the functions in following sequence:
   - Store or load if there is anything in the mem_channel
   - then execute if there is anything in the execute_channel. If a store/load instruction, push it on the mem_channel. If the instruction is branch and you do branch then check branching as yes in the execute channel, so that the next decoded instruction is discarded.
@@ -378,6 +383,8 @@ Following instructions are of the format: op(6) | base(5) | rt(5) | offset(16).
 | LW   | 35 |
 | SB   | 40 |
 | SH   | 41 |
+| SW   |
+
 
 There are also lbe, lbue, lhe, lhue, lwe, sbe, swe. Which do the same thing but to and from user mode virtual address space when executing in kernel mode. So I have decided to leave them for now.
 
