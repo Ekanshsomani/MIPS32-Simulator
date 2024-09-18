@@ -1,3 +1,119 @@
+# Creating a dic to see how decoding would work
+
+{
+    # op code
+    "0" :
+    {
+        # func
+        "0" : ["SLL"],
+
+        "2" : ["RORT", "SRL"],
+
+        "3" : ["SRA"],
+
+        "4" : ["SLLV"],
+
+        "6" : ["ROTRV", "SRLV"],
+
+        "7" : ["SRAV"],
+
+        "9" : ["JALR", "JALR.HB"] # msb of shamt is index
+
+        "32" : ["ADD"],
+
+        "33" : ["ADDU"],
+
+        "34" : ["SUB"],
+
+        "35" : ["SUBU"],
+
+        "36" : ["AND"],
+
+        "37" : ["OR"],
+
+        "38" : ["XOR"],
+
+        "39" : ["NOR"],
+
+        "42" : ["SLT"],
+
+        "43" : ["SLTU"],
+
+        # list index can be obtained by doing shamt-2 in belowcases
+        "48" : ["MUL", "MUH"],
+
+        "49" : ["MULU", "MUHU"],
+
+        "50" : ["DIV", "MOD"],
+
+        "51" : ["DIVU", "MODU"],
+    },
+
+    "1" : ["BGEZ", "BLTZ"],
+
+    "2" : ["J"],
+
+    "3" : ["JAL"],
+
+    "4" : ["BEQ"],
+
+    "5" : ["BNE", "LSA"],
+
+    "6" : ["BLEZ", "BGEUC", "BLEZALC", "BGEZALC"],
+
+    "7" : ["BGTZ", "BLTUC", "BGTZALC", "BLTZALC"],
+
+    "8" : ["BEQC", "BOVC"],
+
+    "9" : ["ADDIU"],
+
+    "10" : ["SLTI"],
+
+    "11" : ["SLTIU"],
+
+    "12" : ["ANDI"],
+
+    "13" : ["ORI"],
+
+    "14" : ["XORI"],
+
+    "15" : ["AUI"],
+
+    "22" : ["BGEC"],
+
+    "23" : ["BLTC"],
+
+    "24" : ["BNEC", "BNVC"],
+
+    "28" :
+    {
+        # func
+        "32" : ["CLZ"],
+
+        "33" : ["CLO"]
+    },
+
+    "31" :
+    {
+        # func
+
+        "32" : ["ALIGN", "BITSWAP"] 
+        # an extremely specific case of division, check README
+
+    }
+
+    "50" : ["BC"],
+
+    "54" : ["JIC", "BEQZC"],
+
+    "58" : ["BALC"],
+
+    "59" : ["ADDIUPC", "AUIPC", "ALUIPC"]
+
+    "62" : ["JIALC", "BNEZC"],
+}
+
+# Below as an earlier attempt
 {
     "000000":
     {

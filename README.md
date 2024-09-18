@@ -218,144 +218,150 @@ Notes:
 
 **16 Bit Operand:**
 
-| **Instruction**       | op     | rs    | rt    | immediate        |
-|-----------------------|--------|-------|-------|------------------|
-| `ADDIU RD,RS, CONST16`| 001001 | XXXXX | XXXXX | XXXXXXXXXXXXXXXX |
-| `ANDI RD, RS, CONST16`| 001100 | XXXXX | XXXXX | XXXXXXXXXXXXXXXX |
-| `ORI RD, RS, CONST16` | 001101 | XXXXX | XXXXX | XXXXXXXXXXXXXXXX |
-| `SLTI RD, RS, CONST16`| 001010 | XXXXX | XXXXX | XXXXXXXXXXXXXXXX |
-| `SLTIU RD,RS, CONST16`| 001011 | XXXXX | XXXXX | XXXXXXXXXXXXXXXX |
-| `XORI RD, RS, CONST16`| 001110 | XXXXX | XXXXX | XXXXXXXXXXXXXXXX |
+Below instructions are all of type: op (6 bit), rs (5 bit), rt(5 bit), immediate(16 bit)
+
+| **Instruction**       | op     | op (in dec) |
+|-----------------------|--------|----|
+| `ADDIU RD,RS, CONST16`| 001001 | 9  |
+| `ANDI RD, RS, CONST16`| 001100 | 12 |
+| `ORI RD, RS, CONST16` | 001101 | 13 |
+| `SLTI RD, RS, CONST16`| 001010 | 10 |
+| `SLTIU RD,RS, CONST16`| 001011 | 11 |
+| `XORI RD, RS, CONST16`| 001110 | 14 |
 
 There is also suppose to be an LUI instruction above. But it is to be interpreted and done as AUI anyways so...
 
 **3 Operands:**
 
-| **Instruction**    | op     | rs    | rt    | rd    | blank | func   |
-|--------------------|--------|-------|-------|-------|-------|--------|
-| `ADD RD, RS, RT`   | 000000 | XXXXX | XXXXX | XXXXX | 00000 | 100000 |
-| `ADDU RD, RS, RT`  | 000000 | XXXXX | XXXXX | XXXXX | 00000 | 100001 |
-| `AND RD, RS, RT`   | 000000 | XXXXX | XXXXX | XXXXX | 00000 | 100100 |
-| `NOR RD, RS, RT`   | 000000 | XXXXX | XXXXX | XXXXX | 00000 | 100111 |
-| `OR RD, RS, RT`    | 000000 | XXXXX | XXXXX | XXXXX | 00000 | 100101 |
-| `SLT RD, RS, RT`   | 000000 | XXXXX | XXXXX | XXXXX | 00000 | 101010 |
-| `SLTU RD, RS, RT`  | 000000 | XXXXX | XXXXX | XXXXX | 00000 | 101011 |
-| `SUB RD, RS, RT`   | 000000 | XXXXX | XXXXX | XXXXX | 00000 | 100010 |
-| `SUBU RD, RS, RT`  | 000000 | XXXXX | XXXXX | XXXXX | 00000 | 100011 |
-| `XOR RD, RS, RT`   | 000000 | XXXXX | XXXXX | XXXXX | 00000 | 100110 |
+Below instructions are all of type: op(6 bit) = 0, rs (5 bit), rt(5 bit), rd(5 bit), blank(5 bit) = 0, func(6 bit)
+
+| **Instruction**    | func   | (in dec) |
+|--------------------|--------|----------|
+| `ADD RD, RS, RT`   | 100000 | 32 |
+| `ADDU RD, RS, RT`  | 100001 | 33 |
+| `AND RD, RS, RT`   | 100100 | 36 |
+| `NOR RD, RS, RT`   | 100111 | 39 |
+| `OR RD, RS, RT`    | 100101 | 37 |
+| `SLT RD, RS, RT`   | 101010 | 42 |
+| `SLTU RD, RS, RT`  | 101011 | 43 |
+| `SUB RD, RS, RT`   | 100010 | 34 |
+| `SUBU RD, RS, RT`  | 100011 | 35 |
+| `XOR RD, RS, RT`   | 100110 | 38 |
 
 **2 Operands:**
-| **Instruction**    | op     | rs    | blank | rd    | blank | func   |
-|--------------------|--------|-------|-------|-------|-------|--------|
-| `CLO RD, RS`       | 011100 | XXXXX | 00000 | XXXXX | 00000 | 100001 |
-| `CLZ RD, RS`       | 011100 | XXXXX | 00000 | XXXXX | 00000 | 100000 |
+
+Below instructions are all of type: op(6 bit) = 28, rs (5 bit), blank(5 bit) = 0, rd(5 bit), blank(5 bit) = 0, func(6 bit)
+
+
+| **Instruction**    | func   | (in dec) |
+|--------------------|--------|----|
+| `CLO RD, RS`       | 100001 | 33 |
+| `CLZ RD, RS`       | 100000 | 32 |
 
 ### Shift Instructions
 
-| **Instruction**       | op     | rs    | rt    | rd    | shamt | func   |
-|-----------------------|--------|-------|-------|-------|-------|--------|
-| `ALIGN RD, RS, RT, BP`| 011111 | XXXXX | XXXXX | XXXXX | 010XX | 100000 |
-| `BITSWAP RD, RT`      | 011111 | 00000 | XXXXX | XXXXX | 00000 | 100000 |
-| `ROTR RD, RS, BITS5`  | 000000 | XXXXX | XXXXX | XXXXX | XXXXX | 000010 |
-| `ROTRV RD, RS, RT`    | 000000 | XXXXX | XXXXX | XXXXX | 00000 | 000110 |
-| `SLL RD, RS, SHIFT5`  | 000000 | 00000 | XXXXX | XXXXX | XXXXX | 000000 |
-| `SLLV RD, RS, RT`     | 000000 | XXXXX | XXXXX | XXXXX | 00000 | 000100 |
-| `SRA RD, RS, SHIFT5`  | 000000 | 00000 | XXXXX | XXXXX | XXXXX | 000011 |
-| `SRAV RD, RS, RT`     | 000000 | XXXXX | XXXXX | XXXXX | 00000 | 000111 |
-| `SRL RD, RS, SHIFT5`  | 000000 | 00000 | XXXXX | XXXXX | XXXXX | 000010 |
-| `SRLV RD, RS, RT`     | 000000 | XXXXX | XXXXX | XXXXX | 00000 | 000110 |
+Below instructions are all of type: op(6 bit), rs/special (5 bit), blank(5 bit) = 0, rd(5 bit), shamt(5 bit), func(6 bit). First two have 31 as op code, the rest have zero.
+
+| **Instruction** | rs/special  | rt    | rd    | shamt | func | func (in dec) |
+|-----------------------|-------|-------|-------|-------|--------|----|
+| `ALIGN RD, RS, RT, BP`| XXXXX | XXXXX | XXXXX | 010XX | 100000 | 32 |
+| `BITSWAP RD, RT`      | 00000 | XXXXX | XXXXX | 00000 | 100000 | 32 |
+| `ROTR RD, RS, BITS5`  | 00001 | XXXXX | XXXXX | XXXXX | 000010 | 2  |
+| `SRL RD, RS, SHIFT5`  | 00000 | XXXXX | XXXXX | XXXXX | 000010 | 2  |
+| `SLL RD, RS, SHIFT5`  | 00000 | XXXXX | XXXXX | XXXXX | 000000 | 0  |
+| `SLLV RD, RS, RT`     | XXXXX | XXXXX | XXXXX | 00000 | 000100 | 4  |
+| `SRA RD, RS, SHIFT5`  | 00000 | XXXXX | XXXXX | XXXXX | 000011 | 3  |
+| `SRAV RD, RS, RT`     | XXXXX | XXXXX | XXXXX | 00000 | 000111 | 7  |
+| `ROTRV RD, RS, RT`    | XXXXX | XXXXX | XXXXX | 00001 | 000110 | 6  |
+| `SRLV RD, RS, RT`     | XXXXX | XXXXX | XXXXX | 00000 | 000110 | 6  |
 
 ### Multiple and Divide Instructions
 
-Below instructions have binary of the form: SPECIAL: 000000 | Rs: 5 | Rt: 5 | Rd: 5 | func: 5 | sop: 6
+Below instructions have binary of the form: op: 000000 | Rs: 5 | Rt: 5 | Rd: 5 | shamt: 5 | func: 6
 
-| **Instruction**   | func  | sop    |
-|-------------------|-------|--------|
-| `MUL RD, RS, RT`  | 00010 | 011000 |
-| `MUH RD, RS, RT`  | 00011 | 011000 |
-| `MULU RD, RS, RT` | 00010 | 011001 |
-| `MUHU RD, RS, RT` | 00011 | 011001 |
-| `DIV RD, RS, RT`  | 00010 | 011010 |
-| `MOD RD, RS, RT`  | 00011 | 011010 |
-| `DIVU RD, RS, RT` | 00010 | 011011 |
-| `MODU RD, RS, RT` | 00011 | 011011 |
+| **Instruction**   | shamt | func   | shamt (in dec) | func (in dec) |
+|-------------------|-------|--------|---|----|
+| `MUL RD, RS, RT`  | 00010 | 011000 | 2 | 48 | 
+| `MUH RD, RS, RT`  | 00011 | 011000 | 3 | 48 |
+| `MULU RD, RS, RT` | 00010 | 011001 | 2 | 49 |
+| `MUHU RD, RS, RT` | 00011 | 011001 | 3 | 49 |
+| `DIV RD, RS, RT`  | 00010 | 011010 | 2 | 50 |
+| `MOD RD, RS, RT`  | 00011 | 011010 | 3 | 50 |
+| `DIVU RD, RS, RT` | 00010 | 011011 | 2 | 51 |
+| `MODU RD, RS, RT` | 00011 | 011011 | 3 | 51 |
 
 
 ### Jump and Branch Instructions
 
-**Unconditional Jump 256-MB span:**
+**Unconditional Jump 256-MB span:** `J ADDR28`: 000010 (2) and `JAL ADDR28`: 000011 (3) with the 28 bit address after that.
 
-`J ADDR28`: 000010 and `JAL ADDR28`: 000011 with the 28 bit address after that.
+**Unconditional Jump Absolute Address:** func in dec is 9.
 
-**Unconditional Jump Absolute Address:**
-| **Instruction**       | op     | rs    | blank | rd    | hint  | func   |
-|-----------------------|--------|-------|-------|-------|-------|--------|
-| `JALR RD, RS`         | 000000 | XXXXX | 00000 | XXXXX | XXXXX | 001001 |
+| **Instruction**       | op     | rs    | blank | rd    | shamt | func   |
+|-----------------------|--------|-------|-------|-------|-------|--------| 
+| `JALR RD, RS`         | 000000 | XXXXX | 00000 | XXXXX | 0XXXX | 001001 |
 | `JALR.HB RD, RS`      | 000000 | XXXXX | 00000 | XXXXX | 1XXXX | 001001 |
 
-**PC-Relative Branch Instructions:**
+**PC-Relative Branch Instructions:** All are of the form op(6) | rs(5) | rt(5) | offset(16). First two have custom rt, last three have rt as zero, and the third one has rt as 1.
 
-| **Instruction**       | op     | rs    | rt    | offset             |
-|-----------------------|--------|-------|-------|--------------------|
-| `BEQ RS, RT, OFF18`   | 000100 | XXXXX | XXXXX | XXXXXXXXXXXXXXXXXX |
-| `BNE RS, RT, OFF18`   | 000101 | XXXXX | XXXXX | XXXXXXXXXXXXXXXXXX |
-| `BGEZ RS, OFF18`      | 000001 | XXXXX | 00001 | XXXXXXXXXXXXXXXXXX |
-| `BGTZ RS, OFF18`      | 000111 | XXXXX | 00000 | XXXXXXXXXXXXXXXXXX |
-| `BLEZ RS, OFF18`      | 000110 | XXXXX | 00000 | XXXXXXXXXXXXXXXXXX |
-| `BLTZ RS, OFF18`      | 000001 | XXXXX | 00000 | XXXXXXXXXXXXXXXXXX |
+| **Instruction**       | op     | op(in dec) |
+|-----------------------|--------|----|
+| `BEQ RS, RT, OFF18`   | 000100 | 4 |
+| `BNE RS, RT, OFF18`   | 000101 | 5 |
+| `BGEZ RS, OFF18`      | 000001 | 1 |
+| `BGTZ RS, OFF18`      | 000111 | 7 |
+| `BLEZ RS, OFF18`      | 000110 | 6 |
+| `BLTZ RS, OFF18`      | 000001 | 1 |
 
 The below 3 don't have forbidden slot in the very next one, and won't cause a reserved instruction exception:
 
-**Unconditional Branch and Call:** Called as  `BC offset` or `BALC offset` with opcodes as  110010 and 111010 respectively. `offset` is 26 bits.
+**Unconditional Branch and Call:** Called as  `BC offset` or `BALC offset` with opcodes as  110010 (50) and 111010 (58) respectively. `offset` is 26 bits.
 
-**Indexed Jumps (register + unscaled offset):** 
-
-| Instruction       | pop           | Func         | rt    | offset  |
-|-------------------|---------------|--------------|-------|---------|
-| `JIC rt offset`   | POP66: 110110 | JIC  : 00000 | XXXXX | 16 bits |
-| `JIALC rt offset` | POP76: 111110 | JIALC: 00000 | XXXXX | 16 bits |
+**Indexed Jumps (register + unscaled offset):**  Both of them are of the form op(6) | 0(5) | rt(5) | offset(16).  `JIC rt offset`: 110110 (54) and `JIALC rt offset`: 111110 (62).
 
 **Compare to Zero Instructions:**
 
 BEQZC, BNEZC of the type op(6) | rs(5) | offset (21). The rest have rs and rt, and offset of length 16. A lot of transaction that end up translating to other in binary and work fine are not mentioned here. Since I won't have to simulate those.
 
-| Instruction | op     |
-|-------------|--------|
-| BEQZC       | 110110 |
-| BNEZC       | 111110 |
-| BEQC        | 001000 |
-| BNEC        | 011000 |
-| BLTC        | 010111 |
-| BGEC        | 010110 |
-| BLTUC       | 000111 |
-| BGEUC       | 000110 |
+| Instruction | op     | op(in dec) |
+|-------------|--------|----|
+| BEQZC       | 110110 | 54 |
+| BNEZC       | 111110 | 62 |
+| BEQC        | 001000 | 8  |
+| BNEC        | 011000 | 24 |
+| BLTC        | 010111 | 23 |
+| BGEC        | 010110 | 22 |
+| BLTUC       | 000111 | 7  |
+| BGEUC       | 000110 | 6  |
 
 **Conditional Calls, Compare Against Zero:**
 
 Offset is 16 bits long in all the below instructions. And rt can never be zero.
 
-| Instruction | op     | rs    |
-|-------------|--------|-------|
-| BEQZALC     | 001000 | 00000 |
-| BNEZALC     | 011000 | 00000 |
-| BLEZALC     | 000110 | 00000 | 
-| BGEZALC     | 000110 | rt    |
-| BGTZALC     | 000111 | 00000 |
-| BLTZALC     | 000111 | rt    |
+| Instruction | op     | rs    | op(in dec) |
+|-------------|--------|-------|----|
+| BEQZALC     | 001000 | 00000 | 8  |
+| BNEZALC     | 011000 | 00000 | 24 |
+| BLEZALC     | 000110 | 00000 | 6  |
+| BGEZALC     | 000110 | rt    | 6  |
+| BGTZALC     | 000111 | 00000 | 7  |
+| BLTZALC     | 000111 | rt    | 7  |
 
 **Branch if Overflow:**
 
-BOVC and BNVC have op-codes `001000` and `011000` respectively. They have rs, rt, and offset(16).
+BOVC and BNVC have op-codes `001000`(8) and `011000`(24) respectively. They have rs, rt, and offset(16).
 
 ### Address Computation and Large Constant Instructions 
 
-| **Instruction** | **Format**                  | op     | func   |
+LSA has func `000101` at the end.
+
+| **Instruction** | **Format**                  | op     | op (in dec) |
 |-----------------|-----------------------------|--------|--------|
-| LSA             | rs(5) rt(5) rd(5) 000 sa(2) | 000000 | 000101 |
-| AUI             | rs(5) rd(5) immediate(16)   | 001111 ||
-| ADDIUPC         | rs(5) 00 immediate(19)      | 111011 ||
-| AUIPC           | rs(5) 11110 immediate(16)   | 111011 ||
-| ALUIPC          | rs(5) 11111 immediate(16)   | 111011 ||
+| LSA             | rs(5) rt(5) rd(5) 000 sa(2) | 000000 | 0  |
+| AUI             | rs(5) rd(5) immediate(16)   | 001111 | 15 |
+| ADDIUPC         | rs(5) 00 immediate(19)      | 111011 | 59 |
+| AUIPC           | rs(5) 11110 immediate(16)   | 111011 | 59 |
+| ALUIPC          | rs(5) 11111 immediate(16)   | 111011 | 59 |
 
 Unsigned here is again a misnomer that signifies no overflow trap.
 
