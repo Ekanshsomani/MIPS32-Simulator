@@ -10,7 +10,7 @@ typedef const uint8_t regAddr;
 struct Channels
 {
     uint32_t data;
-    bool control;
+    uint8_t control;
 };
 
 class Processor
@@ -23,7 +23,7 @@ public:
     vector<uint32_t> registers;
     uint32_t HI, LO, cycle, PC;
     static const int sp = 29, gp = 28, ra = 31;
-    Channels dec_channel, ex_channel, mem_channel;
+    Channels dec_channel, mem_channel;
 };
 
 class Memory

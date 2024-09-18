@@ -3,18 +3,21 @@
 ## Datapath and Control
 
 - A simple clock edge triggered cycle. Four stages - fetch, decode, execute, memory. Each stage gets completed in one cycle irrelevant of the instrcution complexity.
-- I will have three different channels that are an abstract way of implementing data and control bus on the simulator:
+- I will have 2 different channels that are an abstract way of implementing data and control bus on the simulator:
   - decode_channel
     - 32-bit instruction
-    - is_execute_branch (1 bit, check yes if the next stage will try to execute a branch instruction in the next cycle)
-  - execute_channel
-    - actually_branching (1 bit, check yes, if branch instruction actually led to a jump.)
+    - control (2 bit): 
+      - reserved_instruction (1 bit) (check yes if the next stage will try to execute a branch instruction in the next cycle)
+      - actually_branching (1 bit) (will be yes if branch instruction actually led to a jump)
   - mem_channel
-    - 32-bit address
-    - load or store (1 bit)
+    - memory address (32 bit)
+    - Control (8 bit)
+      - read or write (1 bit)
+      - width (2 bit) (how much to read or write)
+      - regAddr (5 bit) (register to read from or write into)
 - In each cycle, we execute the functions in following sequence:
   - Store or load if there is anything in the mem_channel
-  - then execute if there is anything in the execute_channel. If a store/load instruction, push it on the mem_channel. If the instruction is branch and you do branch then check branching as yes in the decode channel, so that the next decoded instruction is discarded.
+  - then execute if there is anything in the execute_channel. If a store/load instruction, push it on the mem_channel. If the instruction is branch and you do branch then check branching as yes in the execute channel, so that the next decoded instruction is discarded.
   - decode if there is anything on the decode channel. If the instruction is branch, check execute_branch as yes. So that the if the very next instruction turns out to be reserved, then we can signal the reserved exception.
   - fetch. Don't fetch if the execute_branch is set to yes in decode channel.
 - Flushing out stages in reverse ensures that the channels are clear for the previous stage.
