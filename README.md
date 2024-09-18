@@ -365,6 +365,29 @@ LSA has func `000101` at the end.
 
 Unsigned here is again a misnomer that signifies no overflow trap.
 
+### Load and Store Instructions
+
+Following instructions are of the format: op(6) | base(5) | rt(5) | offset(16).
+
+| **inst** | **op** |
+|------|----|
+| LB   | 32 |
+| LBU  | 36 |
+| LH   | 33 |
+| LHU  | 37 |
+| LW   | 35 |
+| SB   | 40 |
+| SH   | 41 |
+
+There are also lbe, lbue, lhe, lhue, lwe, sbe, swe. Which do the same thing but to and from user mode virtual address space when executing in kernel mode. So I have decided to leave them for now.
+
+**Atomic read-modify-write**
+
+LL - op(6) | base(5) rt(5) | offset(9) | 0 | func(6) - op = 31 and func = 54.
+SC
+LLWP
+
+
 ### Miscellaneous Instructions
 
 **Serialization**

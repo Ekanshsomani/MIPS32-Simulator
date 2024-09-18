@@ -3,7 +3,7 @@
 void fetch()
 {
     uint32_t inst = RAM.read_word(MIPS.PC);
-    MIPS.dec_channel[data] = inst
+    MIPS.dec_channel.data = inst
     MIPS.PC += 4;
 }
 
