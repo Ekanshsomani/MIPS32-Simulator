@@ -2,13 +2,20 @@
 
 ## Datapath and Control
 
-- A simple clock edge triggered cycle. Four stages - fetch, decode, execute, memory. Each stage gets completed in one cycle irrelevant of the instrcution complexity.
+- A simple clock edge triggered cycle. Three stages - fetch&decode, execute, memory. Each stage gets completed in one cycle irrelevant of the instrcution complexity.
 - I will have 2 different channels that are an abstract way of implementing data and control bus on the simulator:
-  - decode_channel
+  - dec_channel
     - 32-bit instruction
     - control (2 bit): 
       - reserved_instruction (1 bit) (check yes if the next stage will try to execute a branch instruction in the next cycle)
       - actually_branching (1 bit) (will be yes if branch instruction actually led to a jump)
+  - exec_channel
+    - functionPointer (use functional with any from tuple)
+    - 8-bit control (only 6 bits used): specify which of the below lines actually have function argument
+    - 64 bit data:
+      - 4 8-bit lines (lsb)
+      - 1 16 bit line
+      - 1 32-bit line (msb)
   - mem_channel
     - memory address (32 bit)
     - Control (8 bit)
@@ -29,15 +36,18 @@
 
 ## Instruction Field Formats
 
-- **R-Type:** op: 6 | rs: 5 | rt: 5 | rd: 5 | sa: 5 | func: 6 |
-- **I-Type:**
-  - op: 6 | rs: 5 | rt: 5 | immediate: 16 |
-  - op: 6 | rd: 5 | offset: 21 |
-  - op: 6 | offset: 26 |
-  - op: 6 | rs: 5 | rt: 5 | rd: 5 | offset: 11 |
-  - op: 6 | base: 5 | rt: 5 | offset: 10 | func: 6 |
-- **J-Type:**
-  - op: 6 | instr_index: 26 |
+1. **R-Type:** op: 6 | rs: 5 | rt: 5 | rd: 5 | sa: 5 | func: 6 |
+2. **I-Type:**
+    1. op: 6 | rs: 5 | rt: 5 | immediate: 16 |
+    2. op: 6 | rd: 5 | offset: 21 |
+    3. op: 6 | offset: 26 |
+    4. op: 6 | rs: 5 | rt: 5 | rd: 5 | offset: 11 |
+    5. op: 6 | base: 5 | rt: 5 | offset: 10 | func: 6 |
+3. **J-Type:** op: 6 | instr_index: 26 |
+
+Now let's see which op codes and func codes does each type format to:
+
+1. 
 
 ## Instruction Set Release 2
 
@@ -298,7 +308,7 @@ Below instructions have binary of the form: op: 000000 | Rs: 5 | Rt: 5 | Rd: 5 |
 
 ### Jump and Branch Instructions
 
-**Unconditional Jump 256-MB span:** `J ADDR28`: 000010 (2) and `JAL ADDR28`: 000011 (3) with the 28 bit address after that.
+**Unconditional Jump 256-MB span:** `J ADDR28`: 000010 (2) and `JAL ADDR28`: 000011 (3) with the 26 bit address after that.
 
 **Unconditional Jump Absolute Address:** func in dec is 9.
 

@@ -2,16 +2,37 @@
 #include <string>
 #include <vector>
 #include <cstdint>
+#include <functional>
+#include <variant>
 
 using namespace std;
 
 typedef const uint8_t regAddr;
+
+using FuncVariant = variant
+<
+    function(void(regAddr, regAddr)),
+    function(void(regAddr, regAddr, regAddr)),
+    function(void(regAddr, regAddr, regAddr, regAddr)),
+    function(void(regAddr, regAddr, uint16_t)),
+    function(void(regAddr, regAddr, uint32_t)),
+    function(void(regAddr, uint16_t)),
+    function(void(regAddr, uint32_t)),
+    function(void(uint32_t)),
+>
 
 struct Channels
 {
     uint32_t data;
     uint8_t control;
     bool addit;
+};
+
+struct exChannel
+{
+    FuncVariant func;
+    uint8_t control;
+    uint64_t data;
 };
 
 class Processor
@@ -25,6 +46,7 @@ public:
     uint32_t HI, LO, cycle, PC;
     static const int sp = 29, gp = 28, ra = 31;
     Channels dec_channel, mem_channel;
+    exChannel exec_channel;
 };
 
 class Memory

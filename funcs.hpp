@@ -1,8 +1,5 @@
 #include <header.hpp>
 
-#include <functional>
-#include <unordered_map>
-
 void ADD(regAddr& Rd, regAddr& Rs, regAddr& Rt);
 
 void ADDI(regAddr& Rd, regAddr& Rs, uint16_t const16);
@@ -105,21 +102,21 @@ void SELNEZ(regAddr& Rd, regAddr& Rs, regAddr& Rt);
 
 void SELEQZ(regAddr& Rd, regAddr& Rs, regAddr& Rt);
 
-void LB(regAddr& Rt, uint16_t offset, regAddr& base);
+void LB(regAddr& Rt, regAddr& base, uint16_t offset);
 
-void LBU(regAddr& Rt, uint16_t offset, regAddr& base);
+void LBU(regAddr& Rt, regAddr& base, uint16_t offset);
 
-void LH(regAddr& Rt, uint16_t offset, regAddr& base);
+void LH(regAddr& Rt, regAddr& base, uint16_t offset);
 
-void LHU(regAddr& Rt, uint16_t offset, regAddr& base);
+void LHU(regAddr& Rt, regAddr& base, uint16_t offset);
 
-void LW(regAddr& Rt, uint16_t offset, regAddr& base);
+void LW(regAddr& Rt, regAddr& base, uint16_t offset);
 
-void SB(regAddr& Rt, uint16_t offset, regAddr& base);
+void SB(regAddr& Rt, regAddr& base, uint16_t offset);
 
-void SH(regAddr& Rt, uint16_t offset, regAddr& base);
+void SH(regAddr& Rt, regAddr& base, uint16_t offset);
 
-void SW(regAddr& Rt, uint16_t offset, regAddr& base);
+void SW(regAddr& Rt, regAddr& base, uint16_t offset);
 
 void J(uint32_t instr_index);
 

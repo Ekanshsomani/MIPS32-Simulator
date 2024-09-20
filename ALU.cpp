@@ -243,54 +243,54 @@ void SELNEZ(regAddr& Rd, regAddr& Rs, regAddr& Rt){ if(MIPS.registers[Rt]) MIPS.
 void SELEQZ(regAddr& Rd, regAddr& Rs, regAddr& Rt){ if(not MIPS.registers[Rt]) MIPS.registers[Rd] = MIPS.registers[Rs]; }
 
 // load and store instructions
-void LB(regAddr& Rt, uint16_t offset, regAddr& base)
+void LB(regAddr& Rt, regAddr& base, uint16_t offset)
 {
     MIPS.mem_channel.data = MIPS.registers[base] + int16_t(offset);
     MIPS.mem_channel.control = (0 << 5) | Rt;
     MIPS.mem_channel.addit = 0;
 }
 
-void LBU(regAddr& Rt, uint16_t offset, regAddr& base)
+void LBU(regAddr& Rt, regAddr& base, uint16_t offset)
 {
     MIPS.mem_channel.data = MIPS.registers[base] + int16_t(offset);
     MIPS.mem_channel.control = (0 << 5) | Rt;
     MIPS.mem_channel.addit = 1;
 }
 
-void LH(regAddr& Rt, uint16_t offset, regAddr& base)
+void LH(regAddr& Rt, regAddr& base, uint16_t offset)
 {
     MIPS.mem_channel.data = MIPS.registers[base] + int16_t(offset);
     MIPS.mem_channel.control = (1 << 5) | Rt;
     MIPS.mem_channel.addit = 0;
 }
 
-void LHU(regAddr& Rt, uint16_t offset, regAddr& base)
+void LHU(regAddr& Rt, regAddr& base, uint16_t offset)
 {
     MIPS.mem_channel.data = MIPS.registers[base] + int16_t(offset);
     MIPS.mem_channel.control = (1 << 5) | Rt;
     MIPS.mem_channel.addit = 1;
 }
 
-void LW(regAddr& Rt, uint16_t offset, regAddr& base)
+void LW(regAddr& Rt, regAddr& base, uint16_t offset)
 {
     MIPS.mem_channel.data = MIPS.registers[base] + int16_t(offset);
     MIPS.mem_channel.control = (3 << 5) | Rt;
     MIPS.mem_channel.addit = 0;
 }
 
-void SB(regAddr& Rt, uint16_t offset, regAddr& base)
+void SB(regAddr& Rt, regAddr& base, uint16_t offset)
 {
     MIPS.mem_channel.data = MIPS.registers[base] + int16_t(offset);
     MIPS.mem_channel.control = (1 << 7) | (0 << 5) | Rt;
 }
 
-void SH(regAddr& Rt, uint16_t offset, regAddr& base)
+void SH(regAddr& Rt, regAddr& base, uint16_t offset)
 {
     MIPS.mem_channel.data = MIPS.registers[base] + int16_t(offset);
     MIPS.mem_channel.control = (1 << 7) | (1 << 5) | Rt;
 }
 
-void SW(regAddr& Rt, uint16_t offset, regAddr& base)
+void SW(regAddr& Rt, regAddr& base, uint16_t offset)
 {
     MIPS.mem_channel.data = MIPS.registers[base] + int16_t(offset);
     MIPS.mem_channel.control = (1 << 7) | (3 << 5) | Rt;
