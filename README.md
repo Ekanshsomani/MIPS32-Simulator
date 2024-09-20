@@ -40,14 +40,39 @@
 2. **I-Type:**
     1. op: 6 | rs: 5 | rt: 5 | immediate: 16 |
     2. op: 6 | rd: 5 | offset: 21 |
-    3. op: 6 | offset: 26 |
-    4. op: 6 | rs: 5 | rt: 5 | rd: 5 | offset: 11 |
-    5. op: 6 | base: 5 | rt: 5 | offset: 10 | func: 6 |
+    3. op: 6 | rs: 5 | rt: 5 | rd: 5 | offset: 11 |
+    4. op: 6 | base: 5 | rt: 5 | offset: 10 | func: 6 |
+    5. op: 6 | rs: 5 | rt: 00 | immediate: 19 |
 3. **J-Type:** op: 6 | instr_index: 26 |
 
-Now let's see which op codes and func codes does each type format to:
+Now let's see which op codes and func codes does each format use:
 
-1. 
+1: given as op or (op, func) or (op, func, shamt)
+  - (0, (32, 33, 36, 39, 37, 42, 43, 34, 35, 38)) 
+  - (28, (33, 32))
+  - (31, 32, (0, not Zero)), 
+  - (0, (0, 2, 3, 4, 6, 7), (0, not Zero))
+  - (0, (48, 49, 50, 51), (2, 3))
+  - (0, 9, (MSB0, MSB1))
+
+2.1: 
+  - 4, 5, 9, 12, 13, 10, 11, 14, 22, 23, 32, 36, 33, 37, 35, 40, 41, 43
+  - (1, rt = (0, 1))
+  - ((54, 62), rs = 0) 
+  - ((6, 7), rs = (0, not zero), rt = (0, not zero))
+  - (8, (rs = zero, not zero)) 
+  - (24, rs = (0, not zero)), 
+  - 59 (check the table for this)
+
+2.2: 54, 62
+
+2.3:
+
+2.4:
+
+2.5: 59
+
+3: 2, 3, 50, 58
 
 ## Instruction Set Release 2
 
@@ -393,17 +418,16 @@ Following instructions are of the format: op(6) | base(5) | rt(5) | offset(16).
 | LW   | 35 |
 | SB   | 40 |
 | SH   | 41 |
-| SW   |
+| SW   | 43 |
 
 
 There are also lbe, lbue, lhe, lhue, lwe, sbe, swe. Which do the same thing but to and from user mode virtual address space when executing in kernel mode. So I have decided to leave them for now.
 
 **Atomic read-modify-write**
 
-LL - op(6) | base(5) rt(5) | offset(9) | 0 | func(6) - op = 31 and func = 54.
+LL - `op(6) | base(5) rt(5) | offset(9) | 0 | func(6)` - op = 31 and func = 54.
 SC
 LLWP
-
 
 ### Miscellaneous Instructions
 
