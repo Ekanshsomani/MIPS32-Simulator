@@ -31,7 +31,7 @@ class Memory
 {
 public:
 	void create_memory(uint32_t mem_size);
-	uint32_t read(const uint32_t& addr);
+	uint8_t read(const uint32_t& addr);
     void write(const uint32_t& addr, uint8_t byte);
 
 private:

@@ -25,7 +25,7 @@ void memory()
                 break;
             
             default:
-                reg = int16_t((RAM.read(addr + 1) << 8) | RAM.read(addr))
+                reg = int16_t((RAM.read(addr + 1) << 8) | RAM.read(addr));
                 break;
             }
         }

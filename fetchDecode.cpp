@@ -2,7 +2,9 @@
 
 void fetch()
 {
-    uint32_t inst = RAM.read_word(MIPS.PC);
+    uint32_t inst{0};
+    for(int i=0; i<4; i++)
+                inst |= RAM.read(MIPS.PC + i) << (8*i);
     uint8_t& control = MIPS.dec_channel.control;
 
     if(inst != 0)
