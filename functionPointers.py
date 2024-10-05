@@ -7,17 +7,23 @@
         # func
         "0" : ["SLL"],
 
-        "2" : ["RORT", "SRL"],
+        "2" : ["ROTR", "SRL"],
 
         "3" : ["SRA"],
 
         "4" : ["SLLV"],
+
+        "5" : ["LSA"],
 
         "6" : ["ROTRV", "SRLV"],
 
         "7" : ["SRAV"],
 
         "9" : ["JALR", "JALR.HB"], # msb of shamt is index
+
+        "16" : ["CLZ"],
+
+        "17" : ["CLO"],
 
         "32" : ["ADD"],
 
@@ -57,9 +63,13 @@
 
     "4" : ["BEQ"],
 
-    "5" : ["BNE", "LSA"],
+    "5" : ["BNE"],
 
     "6" : ["BLEZ", "BGEUC", "BLEZALC", "BGEZALC"],
+    # BLEZ -> rt = 0
+    # BGEUC, BLTUC, rs != rt != 0
+    # BLEZALC rs = 0, rt != 0
+    # BGEZALC rs = rt != 0
 
     "7" : ["BGTZ", "BLTUC", "BGTZALC", "BLTZALC"],
 
@@ -84,14 +94,6 @@
     "23" : ["BLTC"],
 
     "24" : ["BNEC", "BNVC"],
-
-    "28" :
-    {
-        # func
-        "32" : ["CLZ"],
-
-        "33" : ["CLO"]
-    },
 
     "31" :
     {

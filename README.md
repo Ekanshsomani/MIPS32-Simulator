@@ -1,5 +1,15 @@
 # MIPS Processor Details
 
+## Code Structure (Abstract)
+
+1. Processor class: Holds the state of the processor (registers, PC). Instance - MIPS.
+2. RAM class. Represents memory. Instance - ram
+3. Static Classses for pipeline stages (each will have a call function and channel)
+  - Decode: Fetch & Decode the instruction.
+  - Execute: Execute the instruction.
+  - Memory: If needed, write back or read from RAM.
+4. cycle function. In each cycle, call static classes in reverse order.
+
 ## Datapath and Control
 
 - A simple clock edge triggered cycle. Three stages - fetch&decode, execute, memory. Each stage gets completed in one cycle irrelevant of the instrcution complexity.
@@ -40,9 +50,9 @@
 2. **I-Type:**
     1. op: 6 | rs: 5 | rt: 5 | immediate: 16 |
     2. op: 6 | rd: 5 | offset: 21 |
-    3. op: 6 | rs: 5 | rt: 5 | rd: 5 | offset: 11 |
-    4. op: 6 | base: 5 | rt: 5 | offset: 10 | func: 6 |
-    5. op: 6 | rs: 5 | rt: 00 | immediate: 19 |
+    <!-- 3. op: 6 | rs: 5 | rt: 5 | rd: 5 | offset: 11 |
+    4. op: 6 | base: 5 | rt: 5 | offset: 10 | func: 6 | -->
+    3. op: 6 | rs: 5 | rt: 00 | immediate: 19 |
 3. **J-Type:** op: 6 | instr_index: 26 |
 
 Now let's see which op codes and func codes does each format use:
@@ -65,10 +75,10 @@ Now let's see which op codes and func codes does each format use:
   - 59 (check the table for this)
 
 2.2: 54, 62
-
+<!-- 
 2.3:
 
-2.4:
+2.4: -->
 
 2.5: 59
 
@@ -232,9 +242,8 @@ Ref: https://en.wikibooks.org/wiki/MIPS_Assembly/Instruction_Formats
 
 ## Instruction Set Release 6
 
-Instructions not mentioned in volume-I A but are there in release-6: SEB, SEH, EXT, INS, WSBH, MOVN, MOVZ
-
 Notes:
+- Instructions not mentioned in volume-I A but are there in release-6: SEB, SEH, EXT, INS, WSBH, MOVN, MOVZ
 - LWUPC, LDPC (load and store instructions) mentioned in Volume-I A but not found in volume-II A of MIPS Manual. Thus not included here.
 - The term “unsigned” in ADDIU, ADDU is a misnomer; this operation is 32-bit modulo arithmetic that does not trap on overflow.
 
