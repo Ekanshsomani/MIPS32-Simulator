@@ -1,5 +1,4 @@
-#include<funcs.hpp>
-#include<unordered_set>
+#include <decode.hpp>
 
 unordered_map<uint8_t, FuncVariant> opCall; // index based on op code
 unordered_map<uint8_t, FuncVariant> op0; // index based on func if op code is 0
@@ -38,43 +37,57 @@ op0[39] = NOR;
 op0[42] = SLT;
 op0[43] = SLTU;
 
-unordered_set<int> im_16_ops = {1, 6, 7};
+const unordered_set<int> im_ops = {1, 6, 7, 8, 24, 54, 59, 62};
 
-// the three stages could be static objects with channels
-// coming into them - feels right!
-
-void fetch()
+Deocde::Decode(Processor& Processor):
 {
-    uint32_t inst{0};
+    proc = Processor;
+    exData = proc.exec.data;
+    exControl = proc.exec.control;
+    exFunc = proc.exec.func;
+}
+
+void Decode::fetch()
+{
+    inst = 0;
     for(int i=0; i<4; i++)
-                inst |= RAM.read(MIPS.PC + i) << (8*i);
-    uint8_t& control = MIPS.dec_channel.control;
+        inst |= ram.read(mips.PC + i) << (8*i);
+
+    op = inst >> 26;
+    rs = 0x1F & inst >> 21;
+    rt = 0x1F & inst >> 16;
+    rd = 0x1F & inst >> 11;
+    shamt = 0x1F & inst >> 6;
+    funct = 0x3F & inst;
+    im16 = 0xFFFF & inst;
+}
+
+void Decode::call()
+{
+    fetch();
 
     if(inst != 0)
     {
-        uint8_t op = inst >> 26;
+        if(im_ops.count(op)) itype();
 
-        if(im_16_ops.count(op)) im_16(inst, control);
-        
+        if(op == 31)
+        {
+            if(funct == 32)
+            {
+                if(shamt == 0) exFunc = BITSWAP;
+                else if((shamt >> 2) == 2)
+                {
+                    exFunc = ALIGN;
+                }
+            }
+        }
     }
-    
-    MIPS.PC += 4;
 
-    inst = 0;
-    control = 0;
+    mips.PC += 4;
 }
 
-// im 21 is also being handled here for now
-void im_16(const uin32_t& inst, const uint8_t& control)
+void Decode::itype()
 {
-    uint8_t op = inst >> 26;
-    uint8_t rs = 0x1F & inst >> 21;
-    uint8_t rt = 0x1F & inst >> 16;
-
-    FuncVariant& func = MIPS.exec_channel.func;
-    uint64_t& data = MIPS.exec_channel.data;
-    uint8_t& control = MIPS.exec_channel.control;
-
     if(op == 1)
     {
         if(rt == 0) func = BLTZ;
@@ -139,30 +152,3 @@ void im_16(const uin32_t& inst, const uint8_t& control)
         }
     }
 }
-
-void std_inst(const uint32_t& inst, const uint8_t& control)
-{
-    uint8_t op = inst >> 26;
-    uint8_t rs = 0x1F & inst >> 21;
-    uint8_t rt = 0x1F & inst >> 16;
-    uint8_t rd = 0x1F & inst >> 11;
-    uint8_t shamt = 0x1F & inst >> 6;
-    uint8_t funct = 0x3F & inst;
-
-    FuncVariant& func = MIPS.exec_channel.func;
-    uint64_t& data = MIPS.exec_channel.data;
-    uint8_t& control = MIPS.exec_channel.control;
-
-    if(op == 31)
-    {
-        if(funct == 32)
-        {
-            if(shamt == 0) func = BITSWAP;
-            else if((shamt >> 2) == 2)
-            {
-                func = ALIGN;
-            }
-        }
-    }
-}
-

@@ -4,10 +4,10 @@
 
 1. Processor class: Holds the state of the processor (registers, PC). Instance - MIPS.
 2. RAM class. Represents memory. Instance - ram
-3. Static Classses for pipeline stages (each will have a call function and channel)
-  - Decode: Fetch & Decode the instruction.
-  - Execute: Execute the instruction.
-  - Memory: If needed, write back or read from RAM.
+3. Classses for pipeline stages (each will have a call function and channel)
+   1. Decode: Fetch & Decode the instruction.
+   2. Execute: Execute the instruction.
+   3. Memory: If needed, write back or read from RAM.
 4. cycle function. In each cycle, call static classes in reverse order.
 
 ## Datapath and Control
@@ -50,10 +50,13 @@
 2. **I-Type:**
     1. op: 6 | rs: 5 | rt: 5 | immediate: 16 |
     2. op: 6 | rd: 5 | offset: 21 |
-    <!-- 3. op: 6 | rs: 5 | rt: 5 | rd: 5 | offset: 11 |
-    4. op: 6 | base: 5 | rt: 5 | offset: 10 | func: 6 | -->
     3. op: 6 | rs: 5 | rt: 00 | immediate: 19 |
 3. **J-Type:** op: 6 | instr_index: 26 |
+
+<!-- 
+3. op: 6 | rs: 5 | rt: 5 | rd: 5 | offset: 11 |
+4. op: 6 | base: 5 | rt: 5 | offset: 10 | func: 6 | 
+-->
 
 Now let's see which op codes and func codes does each format use:
 
@@ -517,7 +520,7 @@ When executing a branch instruction, the very next instruction (called delay - s
 - Release 6  introduces conditional compact branches and compact jumps that do not have a delay slot; they have instead a forbidden slot. Release 6 unconditional compact branches have neither a delay slot nor a forbidden slot.
   - **FORBIDDEN:** any CTI, including branches and jumps, ERET, ERETNC, DERET, WAIT, and PAUSE.
 
-# Memory Segments
+## Memory Segments
 
 - **Instruction Memory:** Memory map all the instructions to this segment. Address stored in program counter.
 - **Data Segment:** Stores initialized global and static variables.
@@ -526,10 +529,25 @@ When executing a branch instruction, the very next instruction (called delay - s
 - **Stack:** Used for function calls and local variables. Address stored at stack pointer (register 29)
 - **Global Data Segment:** Stores global variables and constants. Address stored at global pointer (register 28)
 
+## ELF Files
+
+ELF file is the binary file that the CPU (*cough* OS *cough*) actually processes. These contain all the goodies and information, all the data that needs to be loaded in the memory, what ISA we are processing - 32 bit or 64 bit, little or big endian, the processor name, and such things. But ELF files are very broad, and are also used in OS for other things. Now since we aren't actually making an OS and ktthis is just a MIPS32 Simulator for a very specific case, we already would know a lot of things so we can ignore most of the fields, and only focus on the ones that we want to.
+
+So the (maybe) important fields for us would be:
+
+- ELF Header:
+  - entry point address
+  - program headers start offset
+  - sections headers start offset
+  - size of ELF header
+  - size of Program header
+  - Number of Program Headers
+  - Size of Section Headers
+  - Number of Section Headers
+  - Section Header String Table Index
 
 
-
-# Plan
+## Plan
 
 - Traditional model for implementing a processor does it in five stages: Fetch, Decode, Execute, Memory, and Write-back. This processor simulator however will only have one single stage. It will take instructions from memory and execute and store back in the same stage. This decision enables me to focus on the core concepts of the computer-architecture and enable better learning.
 - We will have coprocessor cp0 extension the simulator.

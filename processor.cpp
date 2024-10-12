@@ -1,13 +1,18 @@
-#include <header.hpp>
+#include <processor.hpp>
 
-void Processor::bootUp()
+Processor::Processor(Ram& ram)
+    : dec(*this),
+      exec(*this),
+      mem(*this, ram),
+      PC(0)
 {
-    registers.resize(32);
-    
     registers[0] = 0;
 }
 
-void Processor::hardCode()
+void Processor::cycle()
 {
+    mem.call();
+    exec.call();
+    dec.call();
     registers[0] = 0;
 }

@@ -11,14 +11,14 @@ typedef const uint8_t regAddr;
 
 using FuncVariant = variant
 <
-    function(void(regAddr, regAddr)),
-    function(void(regAddr, regAddr, regAddr)),
-    function(void(regAddr, regAddr, regAddr, regAddr)),
-    function(void(regAddr, regAddr, uint16_t)),
-    function(void(regAddr, regAddr, uint32_t)),
-    function(void(regAddr, uint16_t)),
-    function(void(regAddr, uint32_t)),
-    function(void(uint32_t)),
+    function(void(regAddr, regAddr)), // 000011
+    function(void(regAddr, regAddr, regAddr)), // 000111
+    function(void(regAddr, regAddr, regAddr, regAddr)), // 001111
+    function(void(regAddr, regAddr, uint16_t)), // 010011
+    function(void(regAddr, regAddr, uint32_t)), // 100011
+    function(void(regAddr, uint16_t)), // 010001
+    function(void(regAddr, uint32_t)), // 100001
+    function(void(uint32_t)), // 100000
 >
 
 struct Channels
@@ -60,9 +60,9 @@ private:
 	vector<uint8_t> mem;
 };
 
-Processor MIPS;
-Processor cp0; // use inheritance and give cp0 an inherited class if they need something specific that MIPS can't have
-Memory RAM;
+Processor mips;
+Processor cp0; // use inheritance and give cp0 an inherited class if they need something specific that mips can't have
+Memory ram;
 
 // IO will either end up being an instance object of the parent memory class
 // that imports all the input from a file onto a pariticular section on the memory

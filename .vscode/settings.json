@@ -6,5 +6,8 @@
         "editor.cursorSurroundingLines": 0
     },
     "C_Cpp.errorSquiggles": "disabled",
-    "C_Cpp.default.compilerPath": ""
+    "C_Cpp.default.compilerPath": "",
+    "workbench.editorAssociations": {
+    "*.elf": "hexEditor.hexedit",
+    },
 }
