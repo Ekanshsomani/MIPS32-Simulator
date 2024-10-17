@@ -10,6 +10,8 @@
    3. Memory: If needed, write back or read from RAM.
 4. cycle function. In each cycle, call static classes in reverse order.
 
+Max Vector (Data Segment) size: 40 MB.
+
 ## Datapath and Control
 
 - A simple clock edge triggered cycle. Three stages - fetch&decode, execute, memory. Each stage gets completed in one cycle irrelevant of the instrcution complexity.
