@@ -28,6 +28,28 @@ private:
 
     Processor& proc;
 
+    void zeroOps();
+
+    void normieOps();
+
+    void otherOps();
+
+    void oneType(regAddr& a1, regAddr& a2);
+
+    void twoType(regAddr& a1, regAddr& a2, regAddr& a3);
+
+    void threeType(regAddr& a1, regAddr& a2, regAddr& a3, regAddr& a4);
+
+    void fourType(regAddr& a1, regAddr& a2, const uint16_t& a3);
+
+    void fiveType(regAddr& a1, regAddr& a2, const uint32_t& a3);
+
+    void sixType(regAddr& a1, const uint16_t& a2);
+
+    void sevenType(regAddr& a1, const uint32_t& a2);
+
+    void eightType(const uint32_t& a1);
+
 public:
     uint8_t control;
 
@@ -36,8 +58,6 @@ public:
     void fetch();
 
     void call();
-
-    void itype();
 }
 
 #endif DECODE_HPP

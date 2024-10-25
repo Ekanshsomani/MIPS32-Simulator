@@ -2,13 +2,13 @@
 
 ## Code Structure (Abstract)
 
-1. Processor class: Holds the state of the processor (registers, PC). Instance - MIPS.
-2. RAM class. Represents memory. Instance - ram
-3. Classses for pipeline stages (each will have a call function and channel)
-   1. Decode: Fetch & Decode the instruction.
-   2. Execute: Execute the instruction.
-   3. Memory: If needed, write back or read from RAM.
-4. cycle function. In each cycle, call static classes in reverse order.
+The objects with instance nesting are as follows:
+- Processor
+  - Decode
+  - Execute
+  - Memory
+- Ram
+- Elf
 
 Max Vector (Data Segment) size: 40 MB.
 
@@ -71,7 +71,7 @@ Now let's see which op codes and func codes does each format use:
   - (0, 9, (MSB0, MSB1))
 
 2.1: 
-  - 4, 5, 9, 12, 13, 10, 11, 14, 22, 23, 32, 36, 33, 37, 35, 40, 41, 43
+  - 4, 5, 9, 10, 11, 12, 13, 14, 22, 23, 32, 36, 33, 37, 35, 40, 41, 43
   - (1, rt = (0, 1))
   - ((54, 62), rs = 0) 
   - ((6, 7), rs = (0, not zero), rt = (0, not zero))
@@ -316,18 +316,18 @@ Below instructions are all of type: op(6 bit) = 28, rs (5 bit), blank(5 bit) = 0
 
 Below instructions are all of type: op(6 bit), rs/special (5 bit), blank(5 bit) = 0, rd(5 bit), shamt(5 bit), func(6 bit). First two have 31 as op code, the rest have zero.
 
-| **Instruction** | rs/special  | rt    | rd    | shamt | func | func (in dec) |
-|-----------------------|-------|-------|-------|-------|--------|----|
-| `ALIGN RD, RS, RT, BP`| XXXXX | XXXXX | XXXXX | 010XX | 100000 | 32 |
-| `BITSWAP RD, RT`      | 00000 | XXXXX | XXXXX | 00000 | 100000 | 32 |
-| `ROTR RD, RS, BITS5`  | 00001 | XXXXX | XXXXX | XXXXX | 000010 | 2  |
-| `SRL RD, RS, SHIFT5`  | 00000 | XXXXX | XXXXX | XXXXX | 000010 | 2  |
-| `SLL RD, RS, SHIFT5`  | 00000 | XXXXX | XXXXX | XXXXX | 000000 | 0  |
-| `SLLV RD, RS, RT`     | XXXXX | XXXXX | XXXXX | 00000 | 000100 | 4  |
-| `SRA RD, RS, SHIFT5`  | 00000 | XXXXX | XXXXX | XXXXX | 000011 | 3  |
-| `SRAV RD, RS, RT`     | XXXXX | XXXXX | XXXXX | 00000 | 000111 | 7  |
-| `ROTRV RD, RS, RT`    | XXXXX | XXXXX | XXXXX | 00001 | 000110 | 6  |
-| `SRLV RD, RS, RT`     | XXXXX | XXXXX | XXXXX | 00000 | 000110 | 6  |
+| **Instruction** | rs/special  | shamt | func | func (in dec) |
+|-----------------------|-------|-------|--------|----|
+| `ALIGN RD, RS, RT, BP`| XXXXX | 010XX | 100000 | 32 |
+| `BITSWAP RD, RT`      | 00000 | 00000 | 100000 | 32 |
+| `ROTR RD, RS, BITS5`  | 00001 | XXXXX | 000010 | 2  |
+| `SRL RD, RS, SHIFT5`  | 00000 | XXXXX | 000010 | 2  |
+| `SLL RD, RS, SHIFT5`  | 00000 | XXXXX | 000000 | 0  |
+| `SLLV RD, RS, RT`     | XXXXX | 00000 | 000100 | 4  |
+| `SRA RD, RS, SHIFT5`  | 00000 | XXXXX | 000011 | 3  |
+| `SRAV RD, RS, RT`     | XXXXX | 00000 | 000111 | 7  |
+| `ROTRV RD, RS, RT`    | XXXXX | 00001 | 000110 | 6  |
+| `SRLV RD, RS, RT`     | XXXXX | 00000 | 000110 | 6  |
 
 ### Multiple and Divide Instructions
 
@@ -351,10 +351,7 @@ Below instructions have binary of the form: op: 000000 | Rs: 5 | Rt: 5 | Rd: 5 |
 
 **Unconditional Jump Absolute Address:** func in dec is 9.
 
-| **Instruction**       | op     | rs    | blank | rd    | shamt | func   |
-|-----------------------|--------|-------|-------|-------|-------|--------| 
-| `JALR RD, RS`         | 000000 | XXXXX | 00000 | XXXXX | 0XXXX | 001001 |
-| `JALR.HB RD, RS`      | 000000 | XXXXX | 00000 | XXXXX | 1XXXX | 001001 |
+JALR Rd Rs and JALR.HB Rd, Rs are for the form `op: 000000 | rs: XXXXX | 00000 | rd: XXXXX | shamt: 0XXXX | 001001` where the MSB of shamt is 1 instead of 0 for JALR.HB. The other 4 bits of shamt are not important.
 
 **PC-Relative Branch Instructions:** All are of the form op(6) | rs(5) | rt(5) | offset(16). First two have custom rt, last three have rt as zero, and the third one has rt as 1.
 

@@ -3,6 +3,9 @@
 
 #include <processor.hpp>
 #include <ram.hpp>
+#include <elf.hpp>
+
+using namespace std;
 
 // Basic Main:
 // Load an ELF file

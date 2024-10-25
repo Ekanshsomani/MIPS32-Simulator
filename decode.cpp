@@ -1,50 +1,52 @@
 #include <decode.hpp>
 
-unordered_map<uint8_t, FuncVariant> opCall; // index based on op code
-unordered_map<uint8_t, FuncVariant> op0; // index based on func if op code is 0
+const unordered_map<uint8_t, FuncVariant> opCall = {
+    {2, J},
+    {3, JAL},
+    {4, BEQ},
+    {5, BNE},
+    {9, ADDIU},
+    {10, SLTI},
+    {11, SLTIU},
+    {12, ANDI},
+    {13, ORI},
+    {14, XORI},
+    {15, AUI},
+    {22, BGEC},
+    {23, BLTC},
+    {50, BC},
+    {58, BALC}
+}; // index based on op code
 
-opCall[2] = J;
-opCall[3] = JAL;
-opCall[4] = BEQ;
-opCall[5] = BNE;
-opCall[9] = ADDIU;
-opCall[10] = SLTI;
-opCall[11] = SLTIU;
-opCall[12] = ANDI;
-opCall[13] = ORI;
-opCall[14] = XORI;
-opCall[15] = AUI;
-opCall[22] = BGEC;
-opCall[23] = BLTC;
-opCall[50] = BC;
-opCall[58] = BALC;
 
-op0[0] = SLL;
-op0[3] = SRA;
-op0[4] = SLLV;
-op0[5] = LSA;
-op0[7] = SRAV;
-op0[16] = CLZ;
-op0[17] = CLO;
-op0[32] = ADD;
-op0[33] = ADDU;
-op0[34] = SUB;
-op0[35] = SUBU;
-op0[36] = AND;
-op0[37] = OR;
-op0[38] = XOR;
-op0[39] = NOR;
-op0[42] = SLT;
-op0[43] = SLTU;
+const unordered_map<uint8_t, FuncVariant> op0 = {
+    {0, SLL},
+    {3, SRA},
+    {4, SLLV},
+    {5, LSA},
+    {7, SRAV},
+    {16, CLZ},
+    {17, CLO},
+    {32, ADD},
+    {33, ADDU},
+    {34, SUB},
+    {35, SUBU},
+    {36, AND},
+    {37, OR},
+    {38, XOR},
+    {39, NOR},
+    {42, SLT},
+    {43, SLTU}
+}; // index based on func if op code is 0
 
-const unordered_set<int> im_ops = {1, 6, 7, 8, 24, 54, 59, 62};
-
-Deocde::Decode(Processor& Processor):
+Decode::Decode(Processor& Processor)
+:
+  proc = Processor,
+  exData = proc.exec.data,
+  exControl = proc.exec.control,
+  exFunc = proc.exec.func
 {
-    proc = Processor;
-    exData = proc.exec.data;
-    exControl = proc.exec.control;
-    exFunc = proc.exec.func;
+
 }
 
 void Decode::fetch()
@@ -66,46 +68,91 @@ void Decode::call()
 {
     fetch();
 
+    static const unordered_set<int> othOps = {1, 6, 7, 8, 24, 31, 54, 59, 62};
+
     if(inst != 0)
     {
-        if(im_ops.count(op)) itype();
 
-        if(op == 31)
-        {
-            if(funct == 32)
-            {
-                if(shamt == 0) exFunc = BITSWAP;
-                else if((shamt >> 2) == 2)
-                {
-                    exFunc = ALIGN;
-                }
-            }
-        }
+        if(op == 0) zeroOps();
+        else if(opCall.count(op)) normieOps();
+        else if(othOps.count(op)) otherOps();
+        else cerr << "We need to do more work on decode :(";
     }
 
     mips.PC += 4;
 }
 
-void Decode::itype()
+void Decode::zeroOps()
 {
+    twoType(rd, rs, rt);
+    if(op0.count(funct)) exFunc = op0[funct];
+    else if(funct == 2)
+    {
+        if(rs) exFunc = ROTR;
+        else exFunc = SRL;
+    }
+    else if(funct == 6)
+    {
+        if(shamt) exFunc = ROTRV;
+        else exFunc = SRLV;
+    }
+    else if(funct == 9)
+    {
+        oneType(rd, rs);
+
+        if(shamt >> 4) exFunc = JALR_HB;
+        else exFunc = JALR;
+    }
+    else if(funct > 47 and funct < 52)
+    {
+        const vector<vector<FuncVariant>> vec = {
+            {MUL, MUH},
+            {MULU, MUHU},
+            {DIV, MOD},
+            {DIVU, MODU}
+        };
+
+        exFunc = vec[funct - 48][shamt - 2];
+    }
+    else
+    {
+        cerr << "You need a better instruction when op = 0 :(";
+    }
+}
+
+void Decode::normieOps()
+{
+    exFunc = opCall[op];
+    fourType(rs, rt, im16);
+
+    static const unordered_set<int> im26 = {2, 3, 50, 58};
+    if(im26.count(op)) eightType(inst & 0x03FFFFFF);
+}
+
+void Decode::otherOps()
+{
+    fourType(rs, rt, im16);
     if(op == 1)
     {
+        sixType(rs, im16);
         if(rt == 0) func = BLTZ;
         else if(rt == 1) func = BGEZ;
     }
     else if(op == 6)
     {
-        if(rt == 0) func = BLEZ;
+        sixType(rt, im16);
+        if(rt == 0) { func = BLEZ; sixType(rs, im16); }
         else if(rs == 0) func = BLEZALC;
         else if(rs == rt) func = BGEZALC;
-        else func = BGEUC;
+        else { func = BGEUC; fourType(rs, rt, im16); }
     }
     else if(op == 7)
     {
-        if(rt == 0) func = BGTZ;
+        sixType(rt, im16);
+        if(rt == 0) { func = BGTZ; sixType(rs, im16); }
         else if(rs == 0) func = BGTZALC;
         else if(rs == rt) func = BLTZALC;
-        else func = BLTUC;
+        else { func = BLTUC; fourType(rs, rt, im16);}
     }
     else if(op == 8)
     {
@@ -117,26 +164,31 @@ void Decode::itype()
         if(rs < rt) func = BNEC;
         else func = BNVC;
     }
+    else if(op == 31)
+    {
+        if(shamt == 0) {exFunc = BITSWAP; oneType(rd, rt);}
+        else if((shamt >> 2) == 2)
+        {
+            exFunc = ALIGN;
+            threeType(rd, rs, rt, shamt & 0b11);
+        }
+    }
     else if(op == 54)
     {
-        if(rs == 0)
-        {
-            func = JIC;
-        }
-        else
-        {
-            func = BEQZC;
-        }
+        if(rs == 0) { func = JIC; sixType(rt, im16); }
+        else { func = BEQZC; sevenType(rs, inst & 0x1FFFFF); }
     }
     else if(op == 59)
     {
         if(rt & 0x18)
         {
+            sixType(rs, im16);
             if(rt & 1) func = ALUIPC;
             else func = AUIPC;
         }
         else
         {
+            sevenType(rs, inst & 0x7FFFF);
             func = ADDIUPC;
         }
     }
@@ -144,11 +196,61 @@ void Decode::itype()
     {
         if(rs == 0)
         {
+            sixType(rt, im16);
             func = JIALC;
         }
         else
         {
+            sixType(rs, im16);
             func = BNEZC;
         }
     }
+}
+
+void Decode::oneType(regAddr& a1, regAddr& a2)
+{
+    exControl = 0b000011;
+    exData = (a2 << 8) | a2;
+}
+
+void Decode::twoType(regAddr& a1, regAddr& a2, regAddr& a3)
+{
+    exControl = 0b000111;
+    exData = (a3 << 16) | (a2 << 8) | a1;
+}
+
+void Decode::threeType(regAddr& a1, regAddr& a2, regAddr& a3, regAddr& a4)
+{
+    exControl = 0b001111;
+    exData = (a4 << 24) | (a3 << 16) | (a2 << 8) | a1;
+}
+
+void Decode::fourType(regAddr& a1, regAddr& a2, const uint16_t& a3)
+{
+    exControl = 0b010011;
+    exData = (a3 << 32) | (a2 << 8) | a1;
+}
+
+void Decode::fiveType(regAddr& a1, regAddr& a2, const uint32_t& a3)
+{
+    exControl = 0b100011;
+    exData = (a3 << 32) | (a2 << 8) | a1;
+}
+
+void Decode::sixType(regAddr& a1, const uint16_t& a2)
+{
+    exControl = 0b010001;
+    exData = (a2 << 32) | a1;
+}
+
+void Decode::sevenType(regAddr& a1, const uint32_t& a2)
+{
+    exControl = 0b100001;
+    exData = (a2 << 32) | a1;
+}
+
+void Decode::eightType(const uint32_t& a1)
+{
+    exControl = 0b1000000;
+    exData = a1 << 32;
 }
