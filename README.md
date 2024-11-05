@@ -2,13 +2,20 @@
 
 ## Code Structure (Abstract)
 
-The objects with instance nesting are as follows:
-- Processor
-  - Decode
-  - Execute
-  - Memory
+So here is the idea...
+
+To realistically simulate the MIPS32 Processor:
+- Create a main process, let's call it server. Server basically represents all the memory and control that happens in a MIPS32 Processor.
+- Create 5 subprocesses using fork, let's call them clients. The 5 clients are an abstract representation of Fetch, Decode, Execute, Memory, and Write-Back stages of the processor.
+- Execution of a cycle on the MIPS32 Processor.
+  - All the clients receive a signal from main server at the start of the cycle. 
+  - They work as required on whatever is there in the input channels. 
+  - Once done, they send the necessary info on output channels back to the server.
+  - The server takes the info that it has received from the clients on each channel, does whatever needs to be done to the memory, and pushes the required info onto each of the client's channels.
+- The serve
+
 - Ram
-- Elf
+- El
 
 Max Vector (Data Segment) size: 40 MB.
 
