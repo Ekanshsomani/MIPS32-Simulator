@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <cstdint>
+#include <iostream>
 
 using namespace std;
 
@@ -19,6 +20,6 @@ public:
     uint8_t read(const uint32_t& addr);
     void write(const uint32_t& addr, uint8_t byte);
 
-}
+};
 
 #endif

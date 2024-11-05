@@ -27,6 +27,6 @@ public:
     uint32_t reqRamSize();
 
     void loadData(Ram& ram);
-}
+};
 
 #endif

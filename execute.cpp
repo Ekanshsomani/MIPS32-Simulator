@@ -1,5 +1,11 @@
 #include <execute.hpp>
 
+Execute::Execute(Processor& proc) 
+    : processor(proc), control(0), data(0)
+{
+
+};
+
 void Execute::execFunc(Args... args) 
 {
     visit(& {
@@ -14,6 +20,7 @@ void Execute::execFunc(Args... args)
 
 void Execute::call()
 {
+    if(control == 0 or data == 0) return;
     a1 = data & 0xFF;
     a2 = (data >> 8) & 0xFF;
     a3 = (data >> 16) & 0xFF;

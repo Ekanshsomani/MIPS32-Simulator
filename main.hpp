@@ -27,7 +27,8 @@ using namespace std;
     // continue once CP0 resolves Syscall
         // I can't be more specific right now! :-|
 
-
-
+Elf elfile(argv[1]);
+Ram ram(elfile.reqRamSize());
+Processor mips(ram);
 
 #endif

@@ -18,7 +18,6 @@ const unordered_map<uint8_t, FuncVariant> opCall = {
     {58, BALC}
 }; // index based on op code
 
-
 const unordered_map<uint8_t, FuncVariant> op0 = {
     {0, SLL},
     {3, SRA},
@@ -41,10 +40,10 @@ const unordered_map<uint8_t, FuncVariant> op0 = {
 
 Decode::Decode(Processor& Processor)
 :
-  proc = Processor,
-  exData = proc.exec.data,
-  exControl = proc.exec.control,
-  exFunc = proc.exec.func
+  proc (Processor),
+  exData (proc.exec.data),
+  exControl (proc.exec.control),
+  exFunc (proc.exec.func)
 {
 
 }
@@ -79,7 +78,7 @@ void Decode::call()
         else cerr << "We need to do more work on decode :(";
     }
 
-    mips.PC += 4;
+    proc.PC += 4;
 }
 
 void Decode::zeroOps()

@@ -58,6 +58,6 @@ public:
     void fetch();
 
     void call();
-}
+};
 
-#endif DECODE_HPP
+#endif

@@ -14,7 +14,7 @@ void Memory::call()
 {
     bool write = (control >> 7) & 1;
     uint8_t width = ((control >> 5) & 0x03) + 1;
-    uint32_t& reg = mips.registers[control & 0x1F];
+    uint32_t& reg = proc.registers[control & 0x1F];
 
     if(write)
     {

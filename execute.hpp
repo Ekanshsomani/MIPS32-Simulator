@@ -1,5 +1,8 @@
+#ifndef EXECUTE_HPP
+#define EXECUTE_HPP
+
 #include <funcs.hpp>
-#include <header.hpp>
+#include <processor.hpp>
 
 template <typename... Args> 
 
@@ -10,12 +13,18 @@ private:
     uint16_t a5;
     uint32_t a6;
 
+    Processor& processor;
+
 public:
     FuncVariant func;
     uint8_t control;
     uint64_t data;
 
-    void call()
+    Execute(Processor& proc);
 
-    void execFunc(Args... args)
-}
+    void call();
+
+    void execFunc(Args... args);
+};
+
+#endif

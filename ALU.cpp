@@ -1,4 +1,5 @@
 #include <funcs.hpp>
+#include <main.hpp>
 
 // Arithmetic Instructions
 

@@ -13,15 +13,15 @@ typedef const uint8_t regAddr;
 
 using FuncVariant = variant
 <
-    function(void(regAddr&, regAddr&)), // 000011
-    function(void(regAddr&, regAddr&, regAddr&)), // 000111
-    function(void(regAddr&, regAddr&, regAddr&, regAddr&)), // 001111
-    function(void(regAddr&, regAddr&, const uint16_t&)), // 010011
-    function(void(regAddr&, regAddr&, const uint32_t&)), // 100011
-    function(void(regAddr&, const uint16_t&)), // 010001
-    function(void(regAddr&, const uint32_t&)), // 100001
-    function(void(uint32_t&)), // 100000
->
+    function<void(regAddr&, regAddr&)>, // 000011
+    function<void(regAddr&, regAddr&, regAddr&)>, // 000111
+    function<void(regAddr&, regAddr&, regAddr&, regAddr&)>, // 001111
+    function<void(regAddr&, regAddr&, const uint16_t&)>, // 010011
+    function<void(regAddr&, regAddr&, const uint32_t&)>, // 100011
+    function<void(regAddr&, const uint16_t&)>, // 010001
+    function<void(regAddr&, const uint32_t&)>, // 100001
+    function<void(uint32_t&)> // 100000
+>;
 
 void ADD(regAddr& Rd, regAddr& Rs, regAddr& Rt);
 
@@ -201,4 +201,4 @@ void BOVC(regAddr& Rs, regAddr& Rt, const uint16_t& offset);
 
 void BNVC(regAddr& Rs, regAddr& Rt, const uint16_t& offset);
 
-#endif FUNCS_HPP
+#endif

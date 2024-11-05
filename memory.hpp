@@ -17,6 +17,6 @@ public:
     Memory(Processor& processor, Ram& segment);
 
     void call();
-}
+};
 
 #endif

@@ -25,6 +25,6 @@ public:
     Processor(Ram& ram);
 
     void cycle();
-}
+};
 
 #endif

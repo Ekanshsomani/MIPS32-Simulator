@@ -1,5 +1,6 @@
 #include <funcs.hpp>
 #include <tuple>
+#include <main.hpp>
 
 void J(const uint32_t& instr_index) { mips.PC = (0xF0000000 & mips.PC) | (instr_index << 2); }
 
@@ -108,4 +109,3 @@ void BOVC(regAddr& Rs, regAddr& Rt, const uint16_t& offset)
 
 void BNVC(regAddr& Rs, regAddr& Rt, const uint16_t& offset)
     { if(not __builtin_add_overflow(int32_t(mips.registers[Rs]), int32_t(mips.registers[Rt]), &ignore)) _B18(offset); }
-
